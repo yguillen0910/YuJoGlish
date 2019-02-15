@@ -1,0 +1,350 @@
+package com.tesisyux.realidadaumentada;
+
+import java.io.IOException;
+import java.util.HashMap;
+
+import android.content.res.AssetFileDescriptor;
+import android.database.Cursor;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+
+import com.metaio.sdk.ARViewActivity;
+import com.metaio.sdk.MetaioDebug;
+import com.metaio.sdk.jni.IGeometry;
+import com.metaio.sdk.jni.IMetaioSDKCallback;
+import com.metaio.sdk.jni.Rotation;
+import com.metaio.sdk.jni.TrackingValues;
+import com.metaio.sdk.jni.TrackingValuesVector;
+import com.metaio.tools.io.AssetsManager;
+import com.tesisyux.realidadaumentada.R;
+
+public class LearnActivity extends ARViewActivity {
+	
+	private String trackingConfigFile;
+	private IGeometry model1;
+	private IGeometry model2;
+	private int mSelectedModel;
+	private WordTestActivity mThis;
+	private MetaioSDKCallbackHandler mCallbackHandler;
+	AssetsExtracter mTask;
+	
+	Cursor cursor;
+
+	private SoundPool mSoundPool;
+	private HashMap<String, Integer> mSoundPoolMap;
+	private int mCurrentStreamID;
+	
+	
+
+	/**
+	 * This task extracts all the assets to an external or internal location
+	 * to make them accessible to metaio SDK
+	 */
+	private class AssetsExtracter extends AsyncTask<Integer, Integer, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(Integer... params) 
+		{
+			try 
+			{
+				// Extract all assets and overwrite existing files if debug build
+				AssetsManager.extractAllAssets(getApplicationContext(), BuildConfig.DEBUG);
+			} 
+			catch (IOException e) 
+			{
+				MetaioDebug.printStackTrace(Log.ERROR, e);
+				return false;
+			}
+
+			return true;
+		}
+		
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) 
+	{
+		
+		//MetaioDebug.log(Log.ERROR, "executing assets extracter");
+		// extract all the assets
+		mTask = new AssetsExtracter();
+		mTask.execute(0);
+				
+		//MetaioDebug.log(Log.ERROR, "the application starts");
+		
+		super.onCreate(savedInstanceState);
+				
+		
+		model1 = null;
+		model2 = null;
+		mCallbackHandler = new MetaioSDKCallbackHandler();
+		
+		TextView levelName = (TextView) mGUIView.findViewById(R.id.tVWord);
+		levelName.setText("Circle");
+		
+		
+								
+	}
+
+	@Override
+	protected void onDestroy() 
+	{
+		super.onDestroy();
+		mCallbackHandler.delete();
+		mCallbackHandler = null;
+	}
+	
+	@Override
+	protected int getGUILayout() 
+	{
+		return R.layout.activity_learning; 
+	}
+		
+	public void onButtonClick(View v)
+	{
+		finish();
+	}
+	
+	
+	
+	
+	/*
+	@Override
+	public void onDrawFrame() {
+		// TODO Auto-generated method stub
+		super.onDrawFrame();
+		
+		if (metaioSDK != null)
+	    {
+	        // get all detected poses/targets
+	        TrackingValuesVector poses = metaioSDK.getTrackingValues();
+
+	        if (mSelectedModel == 1){
+		        if (poses.size() > 0) {
+		            marker(poses.get(0).getCoordinateSystemID());
+		        } 
+	        }
+        }
+	}	
+	
+	private void marker(int cosId) {
+    
+		switch (cosId) {
+        case 1:
+            // Getting a file path for a 3D geometry
+            String imageModel = AssetsManager.getAssetPath(getApplicationContext(), "dotnet/cancunit3d.obj");         
+            if (imageModel != null) 
+            {
+                // Loading 3D geometry
+            	model = metaioSDK.createGeometryFromImage(imageModel);
+                if (model != null) 
+                {
+                	model.setScale(150.f);
+                	//model.setCoordinateSystemID(1);
+                }
+                else
+                    MetaioDebug.log(Log.ERROR, "Error loading geometry: "+imageModel);
+            }
+            break;
+        case 2:
+            // Getting a file path for a 3D geometry
+            String metaioManModel = AssetsManager.getAssetPath(getApplicationContext(), "dotnet/dotnetlogo.obj");         
+            if (metaioManModel != null) 
+            {
+                // Loading 3D geometry
+            	model = metaioSDK.createGeometry(metaioManModel);
+                if (model != null) 
+                {
+                	model.setScale(150.f);
+                	//model.setCoordinateSystemID(2);
+                }
+                else
+                    MetaioDebug.log(Log.ERROR, "Error loading geometry: "+metaioManModel);
+            }
+            break;
+        }
+    }
+	*/
+	
+	@Override
+	protected void loadContents() 
+	{
+		try
+		{
+			// Load desired tracking data for planar marker tracking
+			trackingConfigFile = AssetsManager.getAssetPath(getApplicationContext(), "dotnet/cancunitmarker.xml");
+			
+			final boolean result = metaioSDK.setTrackingConfiguration(trackingConfigFile);
+			
+			MetaioDebug.log(Log.ERROR, "data loaded: " + result);
+				
+			//cargando el modelo de cancunIT
+			
+			final String modelPath1 = AssetsManager.getAssetPath(getApplicationContext(), "dotnet/circulo2.obj");
+			final String modelPath2 = AssetsManager.getAssetPath(getApplicationContext(), "dotnet/rectangulo.obj");
+		
+			
+			
+			if (modelPath1 != null)
+			{
+				model1 = metaioSDK.createGeometry(modelPath1);
+							
+				MetaioDebug.log(Log.ERROR, "model loaded " + modelPath1);
+				try
+				{
+					MetaioDebug.log(Log.ERROR, "model name " + model1.getName());
+				}
+				
+				catch (Exception e){
+					MetaioDebug.log(Log.ERROR, "error getting model name");
+				}
+				model1.setCoordinateSystemID(1);
+				System.out.println("Model PAth" + modelPath1);
+				if (model1 != null)
+				{
+					model1.setScale(10.f);
+					//start displaying the model
+					//setActiveModel(1);
+					//model1.setRotation(new Rotation(0f, 0f, (float)-Math.PI/2));
+				}
+				else
+				{
+					MetaioDebug.log(Log.ERROR, "Error loading geometry: " + modelPath1);
+				}
+			}
+			
+			if(modelPath2 != null){
+				model2 = metaioSDK.createGeometry(modelPath2);
+				
+				System.out.println("Model PAth" + modelPath2);
+				
+				MetaioDebug.log(Log.ERROR, "model loaded " + modelPath2);
+				try
+				{
+					MetaioDebug.log(Log.ERROR, "model name " + model2.getName());
+				}
+				
+				catch (Exception e){
+					MetaioDebug.log(Log.ERROR, "error getting model name");
+				}
+				model2.setCoordinateSystemID(2);
+				if (model2 != null)
+				{
+					model2.setScale(10.f);
+					//start displaying the model
+					//setActiveModel(2);
+					//mMoviePlane.setRotation(new Rotation(0f, 0f, (float)-Math.PI/2));
+				}
+				else
+				{
+					MetaioDebug.log(Log.ERROR, "Error loading geometry: " + modelPath2);
+				}
+			}			
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			MetaioDebug.log(Log.ERROR, "FAILED: ");
+		}
+	}
+	
+	
+	
+	@Override
+	protected IMetaioSDKCallback getMetaioSDKCallbackHandler() 
+	{
+		return mCallbackHandler;
+	}
+	
+	/*private void setActiveModel(int modelIndex)
+	{
+		mSelectedModel = modelIndex;
+
+		if (modelIndex == 1){
+			model1.setVisible(true);
+			model2.setVisible(false);
+			playSound();
+		}
+		if (modelIndex == 1){
+			model1.setVisible(false);
+			model2.setVisible(true);
+			playSound();
+		}
+		
+		// Start or pause movie according to tracking state
+		mCallbackHandler.onTrackingEvent(metaioSDK.getTrackingValues());
+	}*/
+	
+	final private class MetaioSDKCallbackHandler extends IMetaioSDKCallback 
+	{
+		@Override
+		public void onSDKReady() 
+		{
+			// show GUI after SDK is ready
+			runOnUiThread(new Runnable() 
+			{
+				@Override
+				public void run() 
+				{
+					
+					mGUIView.setVisibility(View.VISIBLE);
+				}
+			});
+		}
+		
+		@Override
+		public void onTrackingEvent(TrackingValuesVector trackingValues)
+		{
+			// if we detect any target, we bind the loaded geometry to this target
+			if((model1 != null)&&(model2 != null))
+			{
+				for (int i=0; i<trackingValues.size(); i++)
+				{
+					final TrackingValues tv = trackingValues.get(i);
+					if (tv.isTrackingState())
+					{
+						System.out.println("COORDINATE SYSTEM ID "+tv.getCoordinateSystemID());
+						//model1.setCoordinateSystemID(tv.getCoordinateSystemID());
+						break;
+					}
+				}
+			}
+			
+		}
+		
+			}
+
+	@Override
+	protected void onGeometryTouched(IGeometry geometry) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void playSound(){
+		
+		try {
+			AssetFileDescriptor sonido = getAssets().openFd("circle.mp3");
+			MediaPlayer player = new MediaPlayer();
+			player.setDataSource(sonido.getFileDescriptor(),sonido.getStartOffset(),sonido.getLength());
+			player.setLooping(false);
+			player.prepare();
+			player.start();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void onListenButtonClick(View v) {
+		
+		playSound();
+		
+	}
+}

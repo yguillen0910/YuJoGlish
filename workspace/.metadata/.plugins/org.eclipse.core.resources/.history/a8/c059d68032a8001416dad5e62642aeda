@@ -1,0 +1,101 @@
+package com.tesisyux.realidadaumentada.configuracion.usuario;
+
+
+import java.util.Calendar;
+
+import com.tesisyux.realidadaumentada.R;
+
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class AddUserActivity extends Activity {
+
+	// Variables OnCreate
+		private EditText EditTextNombre;
+		private EditText EditTextFechaNacimiento;
+		private TextView TextViewInformativoAgregarUsuario;
+		private DbManagerConfigUsuario managerDB;
+		/**/ //Variables para el metodo dialog 
+		private Calendar cal;
+		private int day;
+		private int month;
+		private int year;
+		/**/
+		
+		@Override
+		protected void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			setContentView(R.layout.activity_add_user);
+			
+		//	(Button) findViewById(R.id.button_guardar_modificar_usuario);
+			EditTextNombre = (EditText) findViewById(R.id.editText_nombre_usuario);
+			EditTextFechaNacimiento = (EditText) findViewById(R.id.editText_fechanac_usuario);
+			TextViewInformativoAgregarUsuario = (TextView) findViewById(R.id.textView_informativo_agregar_modificar_usuario);
+			
+			managerDB = new DbManagerConfigUsuario(this);
+
+			EditTextFechaNacimiento.setFocusable(false);
+			/**/
+		      cal = Calendar.getInstance();
+		      day = cal.get(Calendar.DAY_OF_MONTH);
+		      month = cal.get(Calendar.MONTH);
+		      year = cal.get(Calendar.YEAR);        
+		}
+		
+		// Dialogo para colocar la fecha de nacimiento
+		public void DateDialog(){
+		    OnDateSetListener listener=new OnDateSetListener() {
+		        @Override
+		        public void onDateSet(DatePicker view, int year, int monthOfYear,int dayOfMonth)
+		        {
+		        	monthOfYear++;
+		        	EditTextFechaNacimiento.setText(dayOfMonth+"/"+monthOfYear+"/"+year);
+		        }};
+		    DatePickerDialog dpDialog=new DatePickerDialog(this, listener, year, month, day);
+		    dpDialog.show();
+		}
+		
+		// Metodo al presionar el boton modificar
+		public void onclickGuardarUsuario(View v){
+			
+			
+			//managerDB.modificarUsuarioActivo(EditTextNombre.getText().toString(), EditTextFechaNacimiento.getText().toString());
+			if(EditTextNombre.getText().toString().matches("") || EditTextFechaNacimiento.getText().toString().matches(""))
+				TextViewInformativoAgregarUsuario.setText("Debe rellenar los campos.");
+			else {
+				
+				int edad = Integer.parseInt(AgeManagerActivity.edad(EditTextFechaNacimiento.getText().toString()));
+				if(edad>2 && edad<7){
+					managerDB.insertarUsuario(EditTextNombre.getText().toString(), EditTextFechaNacimiento.getText().toString(), "a");
+					TextViewInformativoAgregarUsuario.setText("Usuario Agregado con exito");
+					
+					Intent redireecion = new Intent(v.getContext(),RedirectionUserActivity.class);
+					redireecion.putExtra("textoInformativo", "Usuario Agregado con Exito!");
+					startActivity(redireecion);
+				}
+				else{
+					TextViewInformativoAgregarUsuario.setText("Solo de pueden tener niños entre 3 a 6 años");
+				}
+			}
+		}
+		
+		// Metodo al presionar el edit text de la fecha
+		public void onclickEditFechaNac(View v){		
+			DateDialog();
+		}
+		      
+		@Override
+		protected void onRestart() {
+			super.onRestart();
+		}
+
+	
+}

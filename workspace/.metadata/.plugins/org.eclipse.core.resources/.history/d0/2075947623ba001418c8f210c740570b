@@ -1,0 +1,467 @@
+package com.tesisyux.realidadaumentada.dbhelper;
+
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.tesisyux.realidadaumentada.configuracion.usuario.AgeManager;
+import com.tesisyux.realidadaumentada.dbhelper.DataBaseHelper;
+import com.tesisyux.realidadaumentada.model.Leccion;
+import com.tesisyux.realidadaumentada.model.Nivel;
+import com.tesisyux.realidadaumentada.model.Palabra;
+
+public class DataBaseManager {
+
+	//Nombre Tablas
+	public static final String TABLE_PALABRA = "palabra";
+	public static final String TABLE_NIVEL = "nivel";
+	public static final String TABLE_LECCION = "leccion";
+	public static final String TABLE_USUARIO = "usuario";
+	public static final String TABLE_USUARIO_PALABRA = "usuario_palabra";
+	
+	//Columnas PALABRA
+	public static final String CN_ID_PALABRA = "id_palabra";
+	public static final String CN_NOMBRE_PALABRA = "nombre_palabra";
+	public static final String CN_POSICION_PALABRA = "posicion_palabra";
+	public static final String CN_FK_ID_LECCION_PALABRA = "fk_id_leccion";
+	
+	//Columnas USUARIO
+	public static final String CN_ID_USUARIO = "id_usuario"; 
+	public static final String CN_NOMBRE_USUARIO = "nombre_usuario";
+	public static final String CN_FECHA_NAC_USUARIO = "fecha_nac_usuario";
+	public static final String CN_SEXO_USUARIO = "sexo_usuario";
+	public static final String CN_ESTADO_USUARIO = "estado_usuario";
+	public static final String CN_FK_ID_NIVEL_USUARIO = "fk_id_nivel";
+	
+	//Columnas NIVEL
+	public static final String CN_ID_NIVEL = "id_nivel"; 
+	public static final String CN_NUMERO_NIVEL = "numero_nivel";
+	public static final String CN_CANTIDAD_PALABRAS_NIVEL = "cantidad_palabras";
+	
+	//Columnas LECCION
+	public static final String CN_ID_LECCION = "id_leccion"; 
+	public static final String CN_NUMERO_LECCION = "numero_leccion";
+	public static final String CN_NOMBRE_LECCION = "nombre_leccion";
+	
+	//Columnas USUARIO_PALABRA
+	public static final String CN_ID_USUARIO_PALABRA = "id_usuario_palabra";
+	public static final String CN_FK_ID_USUARIO = "fk_id_usuario";
+	public static final String CN_FK_ID_PALABRA = "fk_id_palabra";
+	public static final String CN_CONTADOR_ACIERTOS = "contador_aciertos";
+	public static final String CN_CONTADOR_INTENTOS = "contador_intentos";
+	public static final String CN_TIPO_TEST = "tipo";
+	
+	//CREATE TABLE NIVEL
+	public static final String CREATE_TABLE_NIVEL = "create table " + TABLE_NIVEL + " (" 
+													 + CN_ID_NIVEL + " integer primary key autoincrement,"
+													 + CN_NUMERO_NIVEL + " integer not null,"
+													 + CN_CANTIDAD_PALABRAS_NIVEL + " integer not null);";
+	
+	//CREATE TABLE USUARIO  FOREIGN KEY(trackartist) REFERENCES artist(artistid)
+	public static final String CREATE_TABLE_USUARIO = "create table " + TABLE_USUARIO + " (" 
+													 + CN_ID_USUARIO + " integer primary key autoincrement,"
+													 + CN_NOMBRE_USUARIO + " text not null,"
+													 + CN_FECHA_NAC_USUARIO + " text not null,"
+													 + CN_SEXO_USUARIO + " text not null," 
+													 + CN_ESTADO_USUARIO + " boolean not null," 
+													 + CN_FK_ID_NIVEL_USUARIO + " integer not null," 
+													 + " FOREIGN KEY("+CN_FK_ID_NIVEL_USUARIO+") REFERENCES "+TABLE_NIVEL+"("+CN_ID_NIVEL+"));";
+	
+	//CREATE TABLE LECCION
+	public static final String CREATE_TABLE_LECCION = "create table " + TABLE_LECCION + " (" 
+													 + CN_ID_LECCION + " integer primary key autoincrement,"
+													 + CN_NUMERO_LECCION + " integer not null,"
+													 + CN_NOMBRE_LECCION + " text not null);";
+	
+	//CREATE TABLE PALABRA
+	public static final String CREATE_TABLE_PALABRA = "create table " + TABLE_PALABRA + " (" 
+													 + CN_ID_PALABRA + " integer primary key autoincrement,"
+													 + CN_NOMBRE_PALABRA + " text not null,"
+													 + CN_POSICION_PALABRA + " integer not null,"
+													 + CN_FK_ID_LECCION_PALABRA + " integer not null," 
+													 + " FOREIGN KEY("+CN_FK_ID_LECCION_PALABRA+") REFERENCES "+TABLE_LECCION+"("+CN_ID_LECCION+"));";
+	
+	//CREATE TABLE_USUARIO_PALABRA
+		public static final String CREATE_TABLE_USUARIO_PALABRA = "create table " + TABLE_USUARIO_PALABRA + " (" 
+														 + CN_ID_USUARIO_PALABRA + " integer primary key autoincrement,"
+														 + CN_FK_ID_USUARIO + " integer not null,"
+														 + CN_FK_ID_PALABRA + " integer not null,"
+														 + CN_CONTADOR_ACIERTOS + " integer not null," 
+														 + CN_CONTADOR_INTENTOS + " integer not null," 
+														 + CN_TIPO_TEST + " text not null,"
+														 + " FOREIGN KEY("+CN_FK_ID_USUARIO+") REFERENCES "+TABLE_USUARIO+"("+CN_ID_USUARIO+"),"
+														 + " FOREIGN KEY("+CN_FK_ID_PALABRA+") REFERENCES "+TABLE_PALABRA+"("+CN_ID_PALABRA+"));";
+	
+	// Metodos PRINCIPALES
+		private DataBaseHelper helper;
+		private SQLiteDatabase db;
+		private ContentValues valores;
+		
+		public DataBaseManager(Context context){
+			
+			helper = new DataBaseHelper(context);
+			db = helper.getWritableDatabase();
+
+			valores = new ContentValues();
+		}
+	
+    private ContentValues contenedorValores(ContentValues valores,String campo, String valor){
+		if (valores==null){
+			valores = new ContentValues();
+			valores.put(campo, valor);	
+			return valores;
+		}
+		else{
+			valores.put(campo, valor);	
+			return valores;
+		}		
+	}
+ 
+    //Inicio Metodos de TABLA PALABRA 
+	public void insertarPalabra(Palabra palabra){
+  		
+  		ContentValues valores = null;
+  		
+  		valores = contenedorValores(valores,CN_NOMBRE_PALABRA, palabra.getNombre());
+  		valores = contenedorValores(valores,CN_POSICION_PALABRA, Integer.toString(palabra.getPosicion()));
+  		valores = contenedorValores(valores,CN_FK_ID_LECCION_PALABRA,Integer.toString(palabra.getFkIdLeccion()));
+  		
+  		//en el null tiene que ir los campos que pueden se null en la tabla
+  		db.insert(TABLE_PALABRA, null, valores);
+  		
+  	}
+	
+	public void eliminarPalabraPorNombre(int idPalabra){
+		
+		db.delete(TABLE_PALABRA, CN_NOMBRE_PALABRA+"=?", new String[] { String.valueOf(idPalabra) });
+	}
+			
+	public void actualizarPalabraPorNombre (String nombrePalabra, String nuevoNombrePalabra){
+		
+		ContentValues valores = null;
+		
+		valores= contenedorValores(valores, CN_NOMBRE_PALABRA, nuevoNombrePalabra);
+		
+		db.update(TABLE_PALABRA, valores, CN_NOMBRE_PALABRA+"=?", new String[] {nombrePalabra});
+	}
+	
+	public Cursor cargarCursorPalabra(){
+		
+		String columnas[] ={CN_ID_PALABRA,CN_NOMBRE_PALABRA,CN_POSICION_PALABRA, CN_FK_ID_LECCION_PALABRA};
+ 		
+		return db.query(TABLE_PALABRA,columnas, null, null, null, null, null);
+	}
+	
+	public Cursor buscarPalabraPorNombre(String nombrePalabra){
+		
+		String [] columnas = new String [] {CN_ID_PALABRA,CN_NOMBRE_PALABRA};
+ 		
+		return db.query(TABLE_PALABRA, columnas, CN_NOMBRE_PALABRA + "=?",new String[] {nombrePalabra}, null, null, null);
+	}
+	
+	public Cursor buscarPalabraPorPosicion(String posicionPalabra){
+		
+		String [] columnas = new String [] {CN_ID_PALABRA,CN_NOMBRE_PALABRA};
+	
+		return db.query(TABLE_PALABRA, columnas, CN_POSICION_PALABRA + "=?",new String[] {posicionPalabra}, null, null, null);
+	
+	}
+	public Cursor buscarPalabraPorPosicionLeccion(String posicionPalabra, String idLeccionPalabra){
+		
+		String [] columnas = new String [] {CN_ID_PALABRA,CN_NOMBRE_PALABRA};
+	
+		return db.query(TABLE_PALABRA, columnas, CN_POSICION_PALABRA + "=?" + " and " + CN_FK_ID_LECCION_PALABRA + "=?",new String[] {posicionPalabra,idLeccionPalabra}, null, null, null);
+	}
+	public Cursor buscarPalabraPorLeccion(int idLeccionPalabra){
+		
+		String [] columnas = new String [] {CN_ID_PALABRA,CN_NOMBRE_PALABRA};
+	
+		return db.query(TABLE_PALABRA, columnas, CN_FK_ID_LECCION_PALABRA + "=?", new String[] {String.valueOf(idLeccionPalabra)}, null, null, null);
+	}
+	
+  	
+    //Inicio Metodos de TABLA NIVEL 
+	public void insertarNivel (Nivel nivel){
+  		
+  		ContentValues valores = null;
+  		
+  		valores = contenedorValores(valores,CN_NUMERO_NIVEL, Integer.toString(nivel.getNumeroNivel()));
+  		valores = contenedorValores(valores,CN_CANTIDAD_PALABRAS_NIVEL, Integer.toString(nivel.getCantidadPalabras()));
+  		
+  		//en el null tiene que ir los campos que pueden se null en la tabla
+  		db.insert(TABLE_NIVEL, null, valores);
+  		
+  	}
+	
+	public Cursor cargarCursorNivel(){
+		
+		String columnas[] ={CN_NUMERO_NIVEL,CN_CANTIDAD_PALABRAS_NIVEL};
+ 		
+		return db.query(TABLE_NIVEL,columnas, null, null, null, null, null);
+	}
+	
+	public Cursor buscarCantPalabraPorNumeroNivel(String numeroNivel){
+		
+		System.out.println("numero de nivel en buscar cant "+numeroNivel);
+		
+		String columnas[] ={CN_ID_NIVEL,CN_CANTIDAD_PALABRAS_NIVEL};
+		
+		return db.query(TABLE_NIVEL,columnas, CN_ID_NIVEL + "=?", new String[]{numeroNivel}, null, null, null);
+		
+	}
+	
+  	
+    //Inicio Metodos de TABLA LECCION  
+	public void insertarLeccion (Leccion leccion){
+	 		
+		ContentValues valores = null;
+				  		
+		valores = contenedorValores(valores,CN_NUMERO_LECCION, Integer.toString(leccion.getNumeroLeccion()));
+		valores = contenedorValores(valores,CN_NOMBRE_LECCION, leccion.getNombre());
+				  		
+		//en el null tiene que ir los campos que pueden se null en la tabla
+		db.insert(TABLE_LECCION, null, valores);
+				  		
+	}
+  
+	public Cursor cargarCursorLeccion(){
+		
+		String columnas[] ={CN_NUMERO_LECCION,CN_NOMBRE_LECCION};
+ 		
+		return db.query(TABLE_LECCION,columnas, null, null, null, null, null);
+	}
+	
+	public Cursor buscarLeccionPorNombre(String nombreLeccion){
+		
+		String columnas[] ={CN_NUMERO_LECCION};
+		
+		return db.query(TABLE_LECCION,columnas, CN_NOMBRE_LECCION + " like ?", new String[]{nombreLeccion+"%"}, null, null, null);
+	}
+
+    // Inicio Metodos de TABLA USUARIO 
+  	private void desactivarUsuarios(){
+		
+		ContentValues valores = contenedorValores(null,CN_ESTADO_USUARIO,"false");
+		
+		db.update(TABLE_USUARIO,valores,CN_ESTADO_USUARIO+"=?",new String[]{"true"});
+		
+	}
+  	
+  	public Cursor cargarCursorUsuarioActivo() {
+		
+		String[] columnas = new String[]{CN_ID_USUARIO,CN_NOMBRE_USUARIO,CN_FECHA_NAC_USUARIO,CN_ESTADO_USUARIO,CN_SEXO_USUARIO,CN_FK_ID_NIVEL_USUARIO};
+		
+		return db.query(TABLE_USUARIO, columnas, CN_ESTADO_USUARIO+"=?", new String[]{"true"}, null, null, null);
+	}
+  	
+  	public Cursor cargarCursorUsuario() {
+		
+		String[] columnas = new String[]{CN_ID_USUARIO,CN_NOMBRE_USUARIO,CN_FECHA_NAC_USUARIO,CN_ESTADO_USUARIO,CN_SEXO_USUARIO};
+		
+		return db.query(TABLE_USUARIO, columnas, null, null, null, null,CN_NOMBRE_USUARIO+" ASC");
+	}
+	
+	public boolean insertarUsuario(String nombre, String fechaNacimiento, String sexo)
+	{
+		String Edad = AgeManager.edad(fechaNacimiento);
+		int nivel;
+		switch (Edad) {
+			case "3": nivel=1; break;
+			case "4": nivel=2; break;
+			case "5": nivel=3; break;
+			default:  nivel=3; break;
+		}
+		ContentValues valores = null;
+		desactivarUsuarios();
+		valores = contenedorValores(valores,CN_NOMBRE_USUARIO, nombre);
+		valores = contenedorValores(valores,CN_FECHA_NAC_USUARIO, fechaNacimiento);
+		valores = contenedorValores(valores,CN_ESTADO_USUARIO, "true");
+		valores = contenedorValores(valores,CN_SEXO_USUARIO, sexo);
+		valores = contenedorValores(valores,CN_FK_ID_NIVEL_USUARIO, nivel+"");
+		
+		db.insert(TABLE_USUARIO, "CN_NOMBRE_USUARIO",valores);
+		
+		return true;
+	}
+	
+	
+
+	/**
+	 * Recibe el id del usuario que va a activar y desactiva el usuario actualmente activo en la bd
+	 * */
+	public void activarUsuario(String id){
+		
+		Cursor aux = cargarCursorUsuarioActivo();
+		if (aux.moveToFirst())
+		{
+			if (!aux.getString(0).matches(id)){
+				desactivarUsuarios();
+				ContentValues valores = simpleContenedorValores(CN_ESTADO_USUARIO,"true");
+				db.update(TABLE_USUARIO,valores,CN_ID_USUARIO+"=?",new String[]{id});
+			}
+		}
+	}
+	
+	
+	public int obtenerCantPalabrasUsuarioActivo() {
+		
+		System.out.println("Inicio obtenerCantPalabrasUsuarioActivo");
+		
+		int cantidadPalabras, columnNivelUsuario;
+		Cursor auxUsuario = cargarCursorUsuarioActivo();
+		columnNivelUsuario=auxUsuario.getColumnIndex(CN_FK_ID_NIVEL_USUARIO);
+		
+		if (auxUsuario.moveToNext()) {
+			int nivelUsuario = auxUsuario.getInt(columnNivelUsuario);
+			
+			System.out.println("nivelUsuario "+nivelUsuario+" Integer.tostring "+Integer.toString(nivelUsuario));
+			Cursor auxNivel = buscarCantPalabraPorNumeroNivel(Integer.toString(nivelUsuario));
+			
+			if(auxNivel.moveToNext()){
+				System.out.println("cantidadPalabras "+Integer.parseInt(auxNivel.getString(auxNivel.getColumnIndex(CN_CANTIDAD_PALABRAS_NIVEL))));
+				return cantidadPalabras = Integer.parseInt(auxNivel.getString(auxNivel.getColumnIndex(CN_CANTIDAD_PALABRAS_NIVEL)));
+			}
+		}
+		return 0; 
+	}
+	
+	public void insertarUsuarioConSQLExec(String nombre, String fnacimiento, String estado, String sexo){
+		
+			db.execSQL("insert into "+TABLE_USUARIO+ " values (null,'"+nombre+"','"+fnacimiento+"','"+sexo+"','"+estado+"')");
+	}
+			
+	private ContentValues simpleContenedorValores(String campo, String valor){
+	    ContentValues valores = new ContentValues();
+		valores.put(campo, valor);	
+		return valores;
+	}
+	
+	public void eliminarUsuario(String nombre){
+				
+		String[] vector = new String[]{nombre};
+		//db.delete(TABLE_USUARIO, null, null);
+		db.delete(TABLE_USUARIO,CN_NOMBRE_USUARIO+"=?", vector );
+		
+	}
+	
+	public void eliminarUsuario(int id){
+		
+		String Myid = Integer.toString(id);
+		String[] vector = new String[]{Myid};
+		//db.delete(TABLE_USUARIO, null, null);
+		db.delete(TABLE_USUARIO,CN_ID_USUARIO+"=?", vector );
+		
+	}
+	
+	
+	//FALTA PROBAR ESTE METODO
+	public void modificarUsuario(int id, String nombre){
+		
+		ContentValues valores = simpleContenedorValores(CN_ID_USUARIO, ""+id);
+		//Nombre tabla, Valores a actualizar, Clausula Where y Valor del where
+		db.update(TABLE_USUARIO,contenedorValores(valores, CN_NOMBRE_USUARIO, nombre) , CN_ID_USUARIO+"=?", new String[]{""+id});
+	}
+	
+	public void modificarUsuarioActivo(String nombre, String fechaNac, String sexo){
+		
+		ContentValues valores = simpleContenedorValores(CN_NOMBRE_USUARIO, nombre);
+		valores = contenedorValores(valores,CN_FECHA_NAC_USUARIO,fechaNac);
+		valores = contenedorValores(valores,CN_SEXO_USUARIO,sexo);
+		db.update(TABLE_USUARIO,valores,CN_ESTADO_USUARIO+"=?",new String[]{"true"});
+		//ContentValues valores = simpleContenedorValores(CN_ID, ""+id);
+		//Nombre tabla, Valores a actualizar, Clausula Where y Valor del where
+		//db.update(TABLE_USUARIO,contenedorValores(valores, CN_nusuario, nombre) , CN_ID+"=?", new String[]{""+id});
+	}
+	
+	//FALTA PROBAR TAMBIEN
+	public void modificarEstadoUsuarioPorNombre(String nombre, String estado){
+		
+		ContentValues valores  = new ContentValues();
+		valores.put(CN_ESTADO_USUARIO, estado);
+		/*
+		 * 
+		ContentValues args = new ContentValues();
+    	args.put(KEY_NAME, name);
+    	args.put(KEY_EMAIL, email);
+    	return db.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
+		 * 
+		 * */
+		//ContentValues valores = simpleContenedorValores(CN_nusuario, ""+nombre);
+		//Nombre tabla, Valores a actualizar, Clausula Where y Valor del where
+		//db.update(TABLE_USUARIO,contenedorValores(valores, CN_nusuario, palabra) , CN_ID+"=?", new String[]{""+id});
+		db.update(TABLE_USUARIO, valores, CN_NOMBRE_USUARIO+"=?",  new String[]{nombre});
+	}
+	
+	//FALTA PROBAR TAMBIEN
+		public void modificarEstadoUsuarioPorId(Integer id, String estado){
+			
+			ContentValues valores  = new ContentValues();
+			valores.put(CN_ESTADO_USUARIO, estado);
+			db.update(TABLE_USUARIO, valores, CN_ID_USUARIO+"=?",  new String[]{id.toString()});
+		}
+	
+	
+	
+	public Cursor cargarCursorUsuarioEspecifico(String usuario) {
+		
+		String[] columnas = new String[]{CN_ID_USUARIO,CN_NOMBRE_USUARIO,CN_FECHA_NAC_USUARIO};
+		
+		return db.query(TABLE_USUARIO, columnas, CN_NOMBRE_USUARIO+"=?", new String[]{usuario}, null, null, null);
+	}
+	
+	public Cursor cargarCursorUsuariosParecidos(String usuario) {
+		
+		String[] columnas = new String[]{CN_ID_USUARIO,CN_NOMBRE_USUARIO,CN_FECHA_NAC_USUARIO};
+		
+		return db.query(TABLE_USUARIO, columnas, CN_NOMBRE_USUARIO+" like ?", new String[]{"%"+usuario+"%"}, null, null, null);
+	}
+	
+	/**
+	 * Elimino los datos de la tabla Usuario
+	 * */
+
+	// Fin Metodos de TABLA USUARIO 
+	
+	
+	// Inicio Metodos de TABLA USUARIO_PALABRA 
+	public void insertarUsuarioPalabra(String fkIdUsuario, String fkIdPalabra, String contadorAciertos, String contadorIntentos, String tipoTest){
+  		
+  		ContentValues valores = null;
+  		
+  		valores = contenedorValores(valores,CN_FK_ID_USUARIO, fkIdUsuario);
+  		valores = contenedorValores(valores,CN_FK_ID_PALABRA, fkIdPalabra);
+  		valores = contenedorValores(valores,CN_CONTADOR_ACIERTOS, contadorAciertos);
+  		valores = contenedorValores(valores,CN_CONTADOR_INTENTOS, contadorIntentos);
+  		valores = contenedorValores(valores,CN_TIPO_TEST, tipoTest);
+  		
+  		//en el null tiene que ir los campos que pueden se null en la tabla
+  		db.insert(TABLE_USUARIO_PALABRA, null, valores);
+  		
+  	}
+	
+	public Cursor obtenerUsuarioPalabra (String fkIdUsuario, String fkIdPalabra, String tipoTest){
+		
+		String [] columnas = new String [] {CN_ID_USUARIO_PALABRA,CN_CONTADOR_ACIERTOS,CN_CONTADOR_INTENTOS};
+		
+		System.out.println("fkIdUsuario "+fkIdUsuario+" fkIdPalabra "+fkIdPalabra+" tipoTest "+tipoTest);
+ 		
+		return db.query(TABLE_USUARIO_PALABRA, columnas, CN_FK_ID_USUARIO + "=?" + " and " + CN_FK_ID_PALABRA + "=?",new String[] {fkIdUsuario,fkIdPalabra}, null, null, null);
+		
+		
+	}
+	
+	public void actualizarUsuarioPalabra (String idUsuarioPalabra, String contadorAciertos, String contadorIntentos){
+		
+		ContentValues valores = null;
+		
+		valores= contenedorValores(valores, CN_CONTADOR_ACIERTOS, contadorAciertos);
+		valores= contenedorValores(valores, CN_CONTADOR_INTENTOS, contadorIntentos);
+		
+		db.update(TABLE_USUARIO_PALABRA, valores, CN_ID_USUARIO_PALABRA+"=?", new String[] {idUsuarioPalabra});
+	}
+ 
+	
+
+}

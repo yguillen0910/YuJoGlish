@@ -1,0 +1,46 @@
+package com.tesisyux.realidadaumentada;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+
+public class HomeActivity extends Activity  {
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_home);
+		
+		DataBaseManager manager = new DataBaseManager(this);
+		manager.insertar("circle");
+		manager.insertar("square");
+		manager.insertar("rectangle");
+		manager.insertar("triangle");
+	}
+
+	public void onPlayButtonClick(View v)
+	{
+		//setActiveModel(1);
+		Intent myIntent = new Intent (v.getContext() , CancunITActivity.class);
+		startActivity(myIntent);
+	}
+	
+	public void onTestButtonClick(View v) {
+		
+		Intent myIntent = new Intent (v.getContext() , DotNetActivity.class);
+		startActivity(myIntent);
+		
+	}
+	
+	public void onLearnButtonClick(View v) {
+		Intent myIntent = new Intent (v.getContext() , CancunITActivity.class);
+		startActivity(myIntent);
+	}
+	
+	public void onConfigureButtonClick(View v) {
+		Intent myIntent = new Intent (v.getContext() , CancunITActivity.class);
+		startActivity(myIntent);
+	}
+
+}

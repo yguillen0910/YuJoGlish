@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- Search Widget
+    <item android:id="@+id/action_search"
+          android:icon="@drawable/ic_action_search"
+          android:title="@string/action_search"
+          android:showAsAction="ifRoom"
+          android:actionViewClass="android.widget.SearchView"/> -->
+    
+    <!-- Location Found 
+    <item android:id="@+id/action_location_found"
+          android:icon="@drawable/ic_action_location_found"
+          android:title="@string/action_location_found"
+          android:showAsAction="ifRoom" />-->
+    
+    <!-- Refresh -->
+    <item android:id="@+id/action_menu"
+        
+          android:title="@string/action_menu" 
+          android:showAsAction="never" />
+   
+    <item android:id="@+id/action_leccion"
+        
+          android:title="@string/action_leccion" 
+          android:showAsAction="never" />
+    
+    <!-- Help -->
+    <item android:id="@+id/action_acerca"
+        
+          android:title="@string/action_acercade" 
+          android:showAsAction="never"/>
+    
+    <!-- Check updates
+    <item android:id="@+id/action_check_updates"
+         
+          android:title="@string/action_check_updates"
+          android:showAsAction="never" /> -->
+</menu>

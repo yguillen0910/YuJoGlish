@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/grey_300" >
+
+    <TextView
+        android:id="@+id/tVTitulo"
+        style="@style/button_text_small"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="Elige una lección!!"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/color_blanco" />
+    
+    <ScrollView
+        android:id="@+id/scrollViewLesson"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="50dp" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="419dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/buttonBarLesson1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal" >
+
+           
+            
+            <ImageButton
+                android:id="@+id/family_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/yellow_button"
+                android:onClick="onLesson1ButtonClick"
+                android:src="@drawable/family_ic" />
+
+            <ImageButton
+			        android:id="@+id/colors_image_button"
+			        android:layout_width="match_parent"
+			        android:layout_height="150dp"
+			        android:layout_margin="5dp"
+                	android:layout_weight="1"
+                	android:onClick="onLesson2ButtonClick"			                
+			        android:background="@drawable/green_button"
+			        android:src="@drawable/colors_ic"
+			       />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonBarLesson2"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal" >
+
+            
+             <ImageButton
+                android:id="@+id/shapes_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/orange_button"
+                android:onClick="onLesson3ButtonClick"
+                android:src="@drawable/shapes_ic" />
+             
+             <ImageButton
+                android:id="@+id/numbers_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/blue2_button"
+                android:onClick="onLesson4ButtonClick"
+                android:src="@drawable/numbers_ic" />
+
+            
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonBarLesson3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal" >
+                                         
+              <ImageButton
+                android:id="@+id/animals_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/blue_button"
+                android:onClick="onLesson5ButtonClick"
+                android:src="@drawable/animals_ic" />
+             
+             <ImageButton
+                android:id="@+id/classroom_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/purple_button"
+                android:onClick="onLesson6ButtonClick"
+                android:src="@drawable/classroom_ic" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonBarLesson4"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal" >
+            
+           	<ImageButton
+                android:id="@+id/face_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/red_button"
+                android:onClick="onLesson7ButtonClick"
+                android:src="@drawable/face_ic" />
+             
+             <ImageButton
+                android:id="@+id/body_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/turquoise_button"
+                android:onClick="onLesson8ButtonClick"
+                android:src="@drawable/body_ic" />
+            
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/buttonBarLesson5"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal" >
+		                
+                <ImageButton
+                android:id="@+id/toys_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/plum_button"
+                android:onClick="onLesson9ButtonClick"
+                android:src="@drawable/toys_ic" />
+             
+             <ImageButton
+                android:id="@+id/clothes_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/dark_blue_button"
+                android:onClick="onLesson10ButtonClick"
+                android:src="@drawable/clothes_ic" />
+</LinearLayout>
+<LinearLayout
+            android:id="@+id/buttonBarLesson6"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal" >
+                           
+              <ImageButton
+                android:id="@+id/birthday_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/dark_red_button"
+                android:onClick="onLesson11ButtonClick"
+                android:src="@drawable/birthday_ic" />
+             
+             <ImageButton
+                android:id="@+id/fruits_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/dark_orange_button"
+                android:onClick="onLesson12ButtonClick"
+                android:src="@drawable/fruits_ic" />
+	</LinearLayout>
+    </LinearLayout>
+	</ScrollView>
+
+</RelativeLayout>

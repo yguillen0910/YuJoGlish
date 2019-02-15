@@ -1,0 +1,64 @@
+package com.tesisyux.realidadaumentada.customadapter;
+
+
+public class CustomItemActivity {
+
+
+	public String getPalabras() {
+		return palabras;
+	}
+
+	public void setPalabras(String palabras) {
+		this.palabras = palabras;
+	}
+	String nombre;
+	String edad;
+	String imagen;
+	int cantidadPalabra;
+	int totalPalabra;
+	String palabras;
+	
+	public CustomItemActivity(String nombre, String edad, String imagen,
+			int cantidadPalabra, int totalPalabra) {
+		super();
+		this.nombre = nombre;
+		this.edad = edad;
+		this.imagen = imagen;
+		this.cantidadPalabra = cantidadPalabra;
+		this.totalPalabra = 72;
+		this.palabras = cantidadPalabra+" de "+totalPalabra+" palabras";
+	}
+	
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	public String getEdad() {
+		return edad;
+	}
+	public void setEdad(String edad) {
+		this.edad = edad;
+	}
+	public String getImagen() {
+		return imagen;
+	}
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
+	}
+	public int getCantidadPalabra() {
+		return cantidadPalabra;
+	}
+	public void setCantidadPalabra(int cantidadPalabra) {
+		this.cantidadPalabra = cantidadPalabra;
+	}
+	public int getTotalPalabra() {
+		return totalPalabra;
+	}
+	public void setTotalPalabra(int totalPalabra) {
+		this.totalPalabra = totalPalabra;
+	}
+	
+	
+}

@@ -1,0 +1,96 @@
+package com.tesisyux.realidadaumentada.configuracion.usuario;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.tesisyux.realidadaumentada.R;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+
+public class SelectUserActivity extends Activity {
+	
+	private DbManagerConfigUsuario managerDB;
+	private Cursor cursor;
+	private ListView listaUsuarios;
+	private SimpleAdapter adaptadorprueba;
+	private String estado;
+	private String[][] usuarios;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_select_user);
+		
+		managerDB = new DbManagerConfigUsuario(this);
+		cursor = managerDB.cargarCursorUsuario();
+		listaUsuarios = (ListView) findViewById(R.id.listView_seleccionar_usuario);
+		if(cursor.moveToFirst()){
+			ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String,String>>();
+			usuariosBd(cursor);
+			HashMap<String,String> item;
+			for(int i=0;i<usuarios.length;i++){
+		       item = new HashMap<String,String>();
+		       item.put( "line1", usuarios[i][0]);
+		       item.put( "line2", usuarios[i][1]);
+		       list.add( item );
+		     }
+			
+			adaptadorprueba= new SimpleAdapter(this, list,android.R.layout.two_line_list_item , new String[] { "line1","line2" }, new int[] {android.R.id.text1, android.R.id.text2});
+			
+			listaUsuarios.setAdapter(adaptadorprueba);
+			
+		}
+		listaUsuarios.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				 String usuarioSeleccionado = ((TextView) view.findViewById(android.R.id.text1)).getText().toString();
+				 //String datosUsuario = ((TextView) view.findViewById(android.R.id.text2)).getText().toString();
+				 String idUsuario="";
+				 for (int i = 0; i < usuarios.length; i++) {
+					 if(usuarios[i][0].matches(usuarioSeleccionado)){
+						 idUsuario = usuarios[i][2];
+						 managerDB.activarUsuario(idUsuario);
+						 break;
+					 }
+				}
+				 
+				 Intent redireecion = new Intent(SelectUserActivity.this,RedirectionUserActivity.class);
+				 redireecion.putExtra("textoInformativo", "El usuario "+usuarioSeleccionado+" de id "+idUsuario+" ha sido seleccionado");
+				 startActivity(redireecion);
+				
+			}});
+
+	}
+	
+	
+	private  void usuariosBd(Cursor cursor) {
+		
+		int cantidad = cursor.getCount();
+		usuarios = new String[cantidad][3];
+		for (int i = 0; i < cursor.getCount(); i++) {
+			usuarios[i][0]=cursor.getString(1);
+			
+			if (cursor.getString(3).matches("a")){
+				estado = "Usuario Activo";
+				usuarios[i][1]="Edad:"+AgeManagerActivity.edad(cursor.getString(2))+" ("+estado+")";
+				
+			}
+			else usuarios[i][1]="Edad:"+AgeManagerActivity.edad(cursor.getString(2));
+			usuarios[i][2]=cursor.getString(0);
+			cursor.moveToNext();
+		}
+		
+		
+	}
+
+}

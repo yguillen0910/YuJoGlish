@@ -1,0 +1,19 @@
+package com.tesisyux.realidadaumentada;
+
+public class DataBaseManager {
+
+	
+	public static final String TABLE_NAME = "respuesta";
+	
+	public static final String CN_ID ="idRespuesta";
+	public static final String CN_Respuesta = "respuesta";
+
+	
+	public static final String CREATE_TABLE = "create table " + TABLE_NAME +" ("
+			+ CN_ID + " integer primary key autoincrement,"
+			+ CN_Respuesta + " text not null);";
+	
+	
+	
+	
+}

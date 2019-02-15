@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" 
+    android:background="@drawable/white_button">
+
+    <ImageView
+        android:id="@+id/iVUserIconItem"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="8dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/female_ic" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:layout_weight="1" >
+
+        <TextView
+            android:id="@+id/tVUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Daniela"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/cyan_700"
+            android:textStyle="bold"
+            android:typeface="normal" />
+
+        <TextView
+            android:id="@+id/tVUserAge"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Edad: 3 años"
+            android:textColor="@color/cyan_400"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:typeface="normal" />
+
+        <ProgressBar
+            android:id="@+id/pBUser"
+            style="?android:attr/progressBarStyleHorizontal"
+   			android:progressDrawable="@drawable/custom_progress"
+            android:layout_width="fill_parent"
+            android:layout_height="8dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:progress="45"
+             />
+
+        <TextView
+            android:id="@+id/tVUserWords"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="10 de 72 Palabras"
+            android:textColor="@color/grey_400"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

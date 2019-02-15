@@ -1,0 +1,594 @@
+package com.tesisyux.realidadaumentada;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.annotation.DrawableRes;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+
+import com.metaio.sdk.ARViewActivity;
+import com.metaio.sdk.MetaioDebug;
+import com.metaio.sdk.jni.EPLAYBACK_STATUS;
+import com.metaio.sdk.jni.IGeometry;
+import com.metaio.sdk.jni.IMetaioSDKCallback;
+import com.metaio.sdk.jni.MovieTextureStatus;
+import com.metaio.sdk.jni.TrackingValues;
+import com.metaio.sdk.jni.TrackingValuesVector;
+import com.metaio.sdk.jni.Vector3d;
+import com.metaio.tools.io.AssetsManager;
+import com.tesisyux.realidadaumentada.R;
+import com.tesisyux.realidadaumentada.configuracion.usuario.RedirectionUserActivity;
+import com.tesisyux.realidadaumentada.dbhelper.DataBaseManager;
+
+public class WordTestActivity extends ARViewActivity {
+	
+	final static String posicionWord = "com.tesisyux.realidadaumentada.WordTestActivity2";
+	private String respuesta, posicionPalabra, infoRecibidaMenu, infoRecibidaWord,numeroLeccion, nombreLeccion, respuestaCorrecta;
+	private IGeometry model1;
+	private MetaioSDKCallbackHandler mCallbackHandler;
+	private Cursor cursorLeccion, cursorPalabra, cursorPalabraCorrecta;
+	private String[] parts;
+	DataBaseManager manager;
+	ImageView imageCorrecion;
+	private int timeout = 2000; 
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) 
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_word_test);
+						
+		mCallbackHandler = new MetaioSDKCallbackHandler();
+		
+		imageCorrecion = (ImageView) mGUIView.findViewById(R.id.iVCorrecion);
+		imageCorrecion.setVisibility(View.INVISIBLE);
+				
+		ArrayList<Button> idButton = new ArrayList<Button>();
+		
+		Button uno = (Button) mGUIView.findViewById(R.id.bOpcionUno);
+		Button dos = (Button) mGUIView.findViewById(R.id.bOpcionDos);
+		Button tres = (Button) mGUIView.findViewById(R.id.bOpcionTres);
+		Button cuatro = (Button) mGUIView.findViewById(R.id.bOpcionCuatro);
+		
+		uno.setBackgroundResource(R.drawable.purple_button);
+		dos.setBackgroundResource(R.drawable.blue_button);
+		tres.setBackgroundResource(R.drawable.red_button);
+		cuatro.setBackgroundResource(R.drawable.green_button);
+		 
+		uno.setTextAppearance(this, R.style.button_text);
+		dos.setTextAppearance(this, R.style.button_text);
+		tres.setTextAppearance(this, R.style.button_text);
+		cuatro.setTextAppearance(this, R.style.button_text);
+		
+		idButton.add(uno);
+		idButton.add(dos);
+		idButton.add(tres);
+		idButton.add(cuatro);
+		
+		habilitarButtons();
+		
+		Intent mensaje = getIntent();
+		
+		infoRecibidaMenu = mensaje.getStringExtra(TestActivity.INFO_WORD);
+		infoRecibidaWord = mensaje.getStringExtra(WordTestActivity.posicionWord);
+		
+		if( infoRecibidaMenu != null){
+			System.out.println("infoRecibidaMenu "+infoRecibidaMenu);
+			parts = infoRecibidaMenu.split("-");
+		}else{
+			System.out.println("infoRecibidaWord "+infoRecibidaWord);
+			parts = infoRecibidaWord.split("-");
+		}
+		posicionPalabra = parts[0]; 
+		nombreLeccion = parts[1]; 
+			
+		System.out.println("posicion "+posicionPalabra+" nombreLeccion "+nombreLeccion);
+		
+		manager = new DataBaseManager(this);
+		cursorLeccion=manager.buscarLeccionPorNombre(nombreLeccion.toLowerCase());
+			 
+		int numLeccion=cursorLeccion.getColumnIndex(manager.CN_NUMERO_LECCION);
+						
+		if (cursorLeccion.moveToNext()) {
+			numeroLeccion = cursorLeccion.getString(numLeccion);
+		} 
+				
+		manager = new DataBaseManager(this);
+		cursorPalabraCorrecta = manager.buscarPalabraPorPosicionLeccion(posicionPalabra, numeroLeccion);
+
+		int columnNombre = cursorPalabraCorrecta.getColumnIndex(manager.CN_NOMBRE_PALABRA);
+		
+		if (cursorPalabraCorrecta.moveToNext()) {
+			respuestaCorrecta = cursorPalabraCorrecta.getString(columnNombre);
+			System.out.println("AQUI tengo la respuesta correcta "+ respuestaCorrecta);
+		}
+		
+		
+		manager = new DataBaseManager(this);
+		cursorPalabra = manager.buscarPalabraPorLeccion(Integer.parseInt(numeroLeccion));
+		int id, resp;
+				
+		resp=cursorPalabra.getColumnIndex(manager.CN_NOMBRE_PALABRA);
+		id= cursorPalabra.getColumnIndex(manager.CN_ID_PALABRA);	
+		int i=0;
+		ArrayList idButtonAleatorio = listaNumerosAleatorios(4);
+		ArrayList<String> palabrasLeccion = listaPalabraAleatoria();
+		
+		Iterator<String> it = palabrasLeccion.iterator();
+		 
+		while (it.hasNext()) {
+			String respuesta;
+			Button miBoton = (Button) idButton.get((int) idButtonAleatorio.get(i));
+		
+			if(i==0){
+				miBoton.setText(respuestaCorrecta);
+				i++;
+			}
+			else if(i!=0) {
+				respuesta = it.next();
+				if(!respuesta.equalsIgnoreCase(respuestaCorrecta)){
+					miBoton.setText(respuesta); 
+					i++;
+				}		
+			}
+			if(i==4){
+				break;
+			}
+			
+		
+		 
+		}
+		
+		
+						
+	}
+
+	@Override
+	protected void onDestroy() 
+	{
+		super.onDestroy();
+		mCallbackHandler.delete();
+		mCallbackHandler = null;
+	}
+	
+	@Override
+	protected int getGUILayout() 
+	{
+		return R.layout.activity_word_test; 
+	}
+		
+	public void onButtonClick(View v)
+	{
+		finish();
+	}
+	
+	public void onOpcionUnoButtonClick(View v)
+	{
+		
+		Button uno = (Button) mGUIView.findViewById(R.id.bOpcionUno);
+		Button dos = (Button) mGUIView.findViewById(R.id.bOpcionDos);
+		Button tres = (Button) mGUIView.findViewById(R.id.bOpcionTres);
+		Button cuatro = (Button) mGUIView.findViewById(R.id.bOpcionCuatro);
+		
+		dos.setEnabled(false);
+		tres.setEnabled(false);
+		cuatro.setEnabled(false);
+		
+		dos.setBackgroundResource(R.drawable.gray_button);
+		tres.setBackgroundResource(R.drawable.gray_button);
+		cuatro.setBackgroundResource(R.drawable.gray_button);
+				
+		dos.setTextAppearance(this, R.style.button_text_gray);
+		tres.setTextAppearance(this, R.style.button_text_gray);
+		cuatro.setTextAppearance(this, R.style.button_text_gray);
+		
+		if(respuestaCorrecta.equals(uno.getText())){
+			System.out.println("Esta es la respuesta correcta ");
+			System.out.println(respuestaCorrecta+" Esta es la respuesta correcta "+uno.getText());
+			//imageCorrecion.setImageResource(R.drawable.correct_ic);
+		}
+		else{
+			System.out.println("esto es incorrecto");
+			imageCorrecion.setImageResource(R.drawable.incorrect_ic);
+		}
+		imageCorrecion.setVisibility(View.VISIBLE);
+		
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+			       onRestart();
+			}
+		}, timeout);
+	}
+	
+	public void onOpcionDosButtonClick(View v)
+	{
+		Button uno = (Button) mGUIView.findViewById(R.id.bOpcionUno);
+		Button dos = (Button) mGUIView.findViewById(R.id.bOpcionDos);
+		Button tres = (Button) mGUIView.findViewById(R.id.bOpcionTres);
+		Button cuatro = (Button) mGUIView.findViewById(R.id.bOpcionCuatro);
+		
+		uno.setEnabled(false);
+		tres.setEnabled(false);
+		cuatro.setEnabled(false);
+		
+		uno.setBackgroundResource(R.drawable.gray_button);
+		tres.setBackgroundResource(R.drawable.gray_button);
+		cuatro.setBackgroundResource(R.drawable.gray_button);
+		
+		uno.setTextAppearance(this, R.style.button_text_gray);
+		tres.setTextAppearance(this, R.style.button_text_gray);
+		cuatro.setTextAppearance(this, R.style.button_text_gray);
+		
+		if(respuestaCorrecta.equals(dos.getText())){
+			System.out.println("Esta es la respuesta correcta ");
+			System.out.println(respuestaCorrecta+" Esta es la respuesta correcta "+dos.getText());
+			//imageCorrecion.setImageResource(R.drawable.correct_ic);
+			
+		}
+		else{
+			System.out.println("esto es incorrecto");
+			imageCorrecion.setImageResource(R.drawable.incorrect_ic);
+		}
+		imageCorrecion.setVisibility(View.VISIBLE);
+		
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+			       onRestart();
+			}
+		}, timeout);
+	}
+	
+	public void onOpcionTresButtonClick(View v)
+	{
+		Button uno = (Button) mGUIView.findViewById(R.id.bOpcionUno);
+		Button dos = (Button) mGUIView.findViewById(R.id.bOpcionDos);
+		Button tres = (Button) mGUIView.findViewById(R.id.bOpcionTres);
+		Button cuatro = (Button) mGUIView.findViewById(R.id.bOpcionCuatro);
+		
+		uno.setEnabled(false);
+		dos.setEnabled(false);
+		cuatro.setEnabled(false);
+		
+		uno.setBackgroundResource(R.drawable.gray_button);
+		dos.setBackgroundResource(R.drawable.gray_button);
+		cuatro.setBackgroundResource(R.drawable.gray_button);
+		
+		uno.setTextAppearance(this, R.style.button_text_gray);
+		dos.setTextAppearance(this, R.style.button_text_gray);
+		cuatro.setTextAppearance(this, R.style.button_text_gray);
+	
+		if(respuestaCorrecta.equals(tres.getText())){
+			System.out.println("Esta es la respuesta correcta ");
+			System.out.println(respuestaCorrecta+" Esta es la respuesta correcta "+tres.getText());
+			//imageCorrecion.setImageResource(R.drawable.correct_ic);
+			
+		}
+		else{
+			System.out.println("esto es incorrecto");
+			imageCorrecion.setImageResource(R.drawable.incorrect_ic);
+		}
+		imageCorrecion.setVisibility(View.VISIBLE);
+		
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+			       onRestart();
+			}
+		}, timeout);
+	}
+	
+	public void onOpcionCuatroButtonClick(View v)
+	{
+		Button uno = (Button) mGUIView.findViewById(R.id.bOpcionUno);
+		Button dos = (Button) mGUIView.findViewById(R.id.bOpcionDos);
+		Button tres = (Button) mGUIView.findViewById(R.id.bOpcionTres);
+		Button cuatro = (Button) mGUIView.findViewById(R.id.bOpcionCuatro);
+		
+		uno.setEnabled(false);
+		dos.setEnabled(false);
+		tres.setEnabled(false);
+		
+		uno.setBackgroundResource(R.drawable.gray_button);
+		dos.setBackgroundResource(R.drawable.gray_button);
+		tres.setBackgroundResource(R.drawable.gray_button);
+		
+		uno.setTextAppearance(this, R.style.button_text_gray);
+		dos.setTextAppearance(this, R.style.button_text_gray);
+		tres.setTextAppearance(this, R.style.button_text_gray);
+		
+	
+		if(respuestaCorrecta.equals(cuatro.getText())){
+			System.out.println("Esta es la respuesta correcta ");
+			System.out.println(respuestaCorrecta+" Esta es la respuesta correcta "+cuatro.getText());
+			//imageCorrecion.setImageResource(R.drawable.correct_ic);
+		}
+		else{
+			System.out.println("esto es incorrecto");
+			imageCorrecion.setImageResource(R.drawable.incorrect_ic);
+		}
+		imageCorrecion.setVisibility(View.VISIBLE);
+		
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+			       onRestart();
+			}
+		}, timeout);
+	}
+	
+
+	@Override
+	protected void loadContents() 
+	{
+
+		System.out.println("LOAD CONTENTS");
+		
+		try
+		{
+			final String trackingConfigFile;
+			// Load desired tracking data for planar marker tracking
+			trackingConfigFile = AssetsManager.getAssetPath(getApplicationContext(), nombreLeccion.toLowerCase()+"/"+nombreLeccion.toLowerCase()+".xml");
+			
+			final boolean result = metaioSDK.setTrackingConfiguration(trackingConfigFile);
+			
+			MetaioDebug.log(Log.INFO, "data loaded: " + result);
+				
+			//cargando el modelo de cancunIT
+			
+			
+			String modelPath1 = null ;
+			
+			String model = null;
+				
+			model = posicionPalabra;
+			 
+			System.out.println(" loadContents posicion "+model);
+						
+			modelPath1= AssetsManager.getAssetPath(getApplicationContext(), nombreLeccion.toLowerCase()+"/"+respuestaCorrecta+".obj");
+			System.out.println(" modelPath1 "+modelPath1);
+			
+			if (modelPath1 != null)
+			{
+				model1 = metaioSDK.createGeometry(modelPath1);
+							
+				MetaioDebug.log(Log.INFO, "model loaded " + modelPath1);
+				try
+				{
+					MetaioDebug.log(Log.INFO, "model name " + model1.getName());
+				}
+				
+				catch (Exception e){
+					MetaioDebug.log(Log.ERROR, "error getting model name");
+				}
+				
+				System.out.println("modelPath1 != null "+ Integer.parseInt(posicionPalabra));
+				model1.setCoordinateSystemID(Integer.parseInt(posicionPalabra));
+				System.out.println("Model PAth" + modelPath1);
+				if (model1 != null)
+				{
+					model1.setScale(new Vector3d(2f, 2f, 2f));
+					//model1.setScale(2.f);
+					
+					
+				}
+				else
+				{
+					MetaioDebug.log(Log.ERROR, "Error loading geometry: " + modelPath1);
+				}
+			}
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			MetaioDebug.log(Log.ERROR, "FAILED: "+e.getMessage());
+		}
+	
+	}
+	
+	@Override
+	protected IMetaioSDKCallback getMetaioSDKCallbackHandler() 
+	{
+		return mCallbackHandler;
+	}
+	
+	
+	
+	final private class MetaioSDKCallbackHandler extends IMetaioSDKCallback 
+	{
+		@Override
+		public void onSDKReady() 
+		{
+			// show GUI after SDK is ready
+			runOnUiThread(new Runnable() 
+			{
+				@Override
+				public void run() 
+				{
+					
+					mGUIView.setVisibility(View.VISIBLE);
+				}
+			});
+		}
+		
+		@Override
+		public void onTrackingEvent(TrackingValuesVector trackingValues)
+		{
+			// if we detect any target, we bind the loaded geometry to this target
+			if(model1 != null)
+			{
+				habilitarButtons();
+				for (int i=0; i<trackingValues.size(); i++)
+				{
+					final TrackingValues tv = trackingValues.get(i);
+					if (tv.isTrackingState())
+					{
+						System.out.println("COORDINATE SYSTEM ID "+tv.getCoordinateSystemID());
+						
+						break;
+					}
+				}
+			}
+				
+		}
+	}
+	
+	public void onNextWordButtonClick(View v) {
+		System.out.println("onNextButtonClick");
+		onRestart();
+		
+	}
+	
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		
+		Integer p = Integer.parseInt(posicionPalabra)+1;
+		manager = new DataBaseManager(this);
+		int cantidadPalabras = manager.obtenerCantPalabrasUsuarioActivo();
+		System.out.println("cantidadPalabras "+cantidadPalabras);
+		
+		if(p<=cantidadPalabras){
+			Intent myIntent = new Intent (this , WordTestActivity.class);
+			String infoEnvio = p.toString()+"-"+nombreLeccion;
+			System.out.println("InfoEnvioWord "+infoEnvio);
+			myIntent.putExtra(posicionWord, infoEnvio);
+			startActivity(myIntent);
+				
+		}else {
+			Intent myIntent = new Intent (this , LessonActivity.class);
+			startActivity(myIntent);
+		}
+	}
+	
+	public ArrayList<Integer> listaNumerosAleatorios(int cantNumeros){
+
+	    int pos;
+	   
+	    ArrayList< Integer > numeros = new ArrayList < Integer > ();
+	   
+	    for (int i = 0; i < cantNumeros ; i++) {
+	      pos = (int) Math.floor(Math.random() * cantNumeros );
+	      while (numeros.contains(pos)) {
+	        pos = (int) Math.floor(Math.random() * cantNumeros );
+	      }
+	      numeros.add(pos);
+	    }
+	    System.out.println("Núm. aleatorios sin repetición:");
+	    System.out.println(numeros.toString());
+		return numeros;
+	} 
+	
+	public boolean repetido (ArrayList listaNumeros, int numero) {
+		
+		boolean rep = false;
+		for (int i = 0; i < listaNumeros.size(); i++) {
+			
+			if(listaNumeros.contains(numero))
+				rep = true;
+			else
+				rep =false;
+		}
+		return rep;
+		
+	}
+
+	@Override
+	protected void onGeometryTouched(IGeometry geometry) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public ArrayList<String> listaPalabraAleatoria() {
+				
+		ArrayList palabras = new ArrayList<>();
+		
+		manager = new DataBaseManager(this);
+		cursorPalabra = manager.buscarPalabraPorLeccion(Integer.parseInt(numeroLeccion));
+		
+		int	resp=cursorPalabra.getColumnIndex(manager.CN_NOMBRE_PALABRA);
+				
+		while (cursorPalabra.moveToNext()) {
+						
+			String palabra = cursorPalabra.getString(resp);
+			palabras.add(palabra);
+			
+		}
+		
+		Collections.shuffle(palabras);
+	    System.out.println("Palabras orden aleatorio");
+	    System.out.println(palabras.toString());
+	    return palabras;
+		
+		
+	}
+	
+	public void habilitarButtons(){
+		
+		Button uno = (Button) mGUIView.findViewById(R.id.bOpcionUno);
+		Button dos = (Button) mGUIView.findViewById(R.id.bOpcionDos);
+		Button tres = (Button) mGUIView.findViewById(R.id.bOpcionTres);
+		Button cuatro = (Button) mGUIView.findViewById(R.id.bOpcionCuatro);
+		 
+		uno.setBackgroundResource(R.drawable.purple_button);
+		dos.setBackgroundResource(R.drawable.blue_button);
+		tres.setBackgroundResource(R.drawable.red_button);
+		cuatro.setBackgroundResource(R.drawable.green_button);
+		 
+		uno.setTextAppearance(this, R.style.button_text);
+		dos.setTextAppearance(this, R.style.button_text);
+		tres.setTextAppearance(this, R.style.button_text);
+		cuatro.setTextAppearance(this, R.style.button_text);
+		
+		uno.setEnabled(true);
+		dos.setEnabled(true);
+		tres.setEnabled(true);
+		cuatro.setEnabled(true);
+	}
+	
+public void deshabilitarButtons(){
+		
+		Button uno = (Button) mGUIView.findViewById(R.id.bOpcionUno);
+		Button dos = (Button) mGUIView.findViewById(R.id.bOpcionDos);
+		Button tres = (Button) mGUIView.findViewById(R.id.bOpcionTres);
+		Button cuatro = (Button) mGUIView.findViewById(R.id.bOpcionCuatro);
+		 
+		uno.setBackgroundResource(R.drawable.gray_button);
+		dos.setBackgroundResource(R.drawable.gray_button);
+		tres.setBackgroundResource(R.drawable.gray_button);
+		cuatro.setBackgroundResource(R.drawable.gray_button);
+		 
+		uno.setTextAppearance(this, R.style.button_text_gray);
+		dos.setTextAppearance(this, R.style.button_text_gray);
+		tres.setTextAppearance(this, R.style.button_text_gray);
+		cuatro.setTextAppearance(this, R.style.button_text_gray);
+		
+		uno.setEnabled(false);
+		dos.setEnabled(false);
+		tres.setEnabled(false);
+		cuatro.setEnabled(false);
+	}
+	
+	
+}

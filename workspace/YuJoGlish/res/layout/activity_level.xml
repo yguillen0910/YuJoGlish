@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/bg_turquesa" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@android:color/transparent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/buttonBarLevel2"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/play_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/plum_button"
+                android:onClick="onPlayButtonClick"
+                android:src="@drawable/play_ic" />
+
+            <ImageButton
+                android:id="@+id/settings_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/gray_button"
+                android:onClick="onSettingsButtonClick"
+                android:src="@drawable/settings_ic" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tVPlay"
+        style="@style/button_text_small"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayout1"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="25dp"
+        android:text="Empieza a Jugar!" />
+
+    <TextView
+        android:id="@+id/tVNombreUsuario"
+        style="@style/button_text_small"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tVPlay"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"
+        android:text="Large Text" />
+
+</RelativeLayout>

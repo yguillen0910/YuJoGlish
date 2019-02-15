@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/bg_turquesa" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@android:color/transparent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/buttonBarLevel1"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/learn_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/orange_button"
+                android:onClick="onLearnButtonClick"
+                android:src="@drawable/learn_ic" />
+
+            <ImageButton
+                android:id="@+id/test_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/yellow_button"
+                android:onClick="onTestButtonClick"
+                android:src="@drawable/test_ic" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonBarLevel2"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/practice_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/green_button"
+                android:onClick="onPracticeButtonClick"
+                android:src="@drawable/practice_ic" />
+
+            <ImageButton
+                android:id="@+id/statistic_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/blue2_button"
+                android:onClick="onStatisticButtonClick"
+                android:src="@drawable/statistic_ic" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewNameLeccion"
+        style="@style/button_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayout1"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="28dp"
+        android:text="@string/texto_generico"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</RelativeLayout>

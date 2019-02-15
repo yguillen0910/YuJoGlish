@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">YuJoGlish</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="btnClose">close</string>
+    <string name="metaioSDKSignature">SPIVKALlmF1JQOkiHfcSqNnIjoCWkbirx615gGZ12ig=</string>
+    <string name="title_activity_trailer">TrailerActivity</string>
+    <string name="title_activity_dot_net">DotNetActivity</string>
+    <string name="title_activity_cancun_it">CancunITActivity</string>
+    <string name="title_activity_principal">PrincipalActivity</string>
+    <string name="title_activity_inicio">IniciolActivity</string>
+    <string name="title_activity_try_again">TryAgainActivity</string>
+    <string name="title_activity_great_job">GreatJobActivity</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="speech_prompt">Say something&#8230;</string>
+    <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
+    <string name="tap_on_mic">Tap on mic to speak</string>
+    <string name="prueba">prueba text view</string>
+    <string name="good_job">You just say the word. Good Job!</string>
+    <string name="level1">Level 1</string>
+    <string name="level2">Level 2</string>
+	<string name="level3">Level 3</string>
+    <string name="boton_configuracion_usuario">Configuracion de Usuario</string>
+	<string name="boton_empezar_prueba">Empezar Prueva de Voz</string>
+	<string name="tf_nombre_usuario">Introduzca Nombre y Fecha de nacimiento</string>
+	<string name="boton_guardar_usuario">Guardar</string>
+	<string name="button_agregar_usuario">AGREGAR USUARIO</string>
+	<string name="textview_titulo_agregar_usuario">\u00A0 Agregar Usuario</string>
+	<string name="hint_nombre_usuario">Nombre Usuario</string>
+	<string name="hint_fecha_nacimiento">Fecha Nacimiento</string>
+	<string name="textview_titulo_config_usuario">\u00A0 Settings</string>
+	<string name="textview_nombre_usuario">\u00A0 Nombre</string>
+	<string name="textview_edad_usuario">\u00A0 Edad</string>
+	<string name="button_modificar_usuario">MODIFICAR USUARIO</string>
+	<string name="textView_modificar_usuario">\u00A0 Modificar Usuario</string>
+	<string name="button_cambiar_usuario">CAMBIAR USUARIO</string>
+	<string name="button_seleccionar_usuario">Seleccionar Usuario</string>
+	<string name="textview_titulo_seleccionar_usuario">\u00A0 SELECCIONAR USUARIO</string>
+	<string name="button_add_usuario">AGREGAR USUARIO</string>
+	<string name="texto_generico">texto generado</string>
+	<string name="imagen_usuario">imagen usuario</string>
+	<string name="add_user_cbmale">Male</string>
+	<string name="add_user_cbfemale">Female</string>
+	<string name="textview_play">Empieza a Jugar!</string>
+	<string name="statistics_text">Statistics</string>
+	<string name="stadistics_details_title">Stadistics Details</string>
+	<string name="stadistics_man_button_text">Detalles</string>
+
+	<!-- Activity titles -->    
+    <string name="activity_location_found">Location Found</string>
+    
+    <!-- Action Bar action items -->
+    <string name="action_leccion">Lecciones</string>
+    <string name="action_menu">Menu Principal</string>
+    <string name="action_acercade">Acerca De</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_contacts">Contacts</string>
+    <string name="action_help">Help</string>
+    <string name="action_check_updates">Check for Updates</string>
+    
+    <!-- Search  -->
+    <string name="search_hint">Search color..</string>
+    
+</resources>

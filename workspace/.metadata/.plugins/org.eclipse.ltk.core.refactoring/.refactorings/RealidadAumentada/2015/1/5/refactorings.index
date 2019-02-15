@@ -1,0 +1,23 @@
+1422557456807	Rename package 'info.androidhive.speechtotext.configuracion.usuario'
+1422557893338	Rename type 'ConfiguracionUsuarioAgregar'
+1422557924768	Rename type 'AgeManager'
+1422558228765	Rename type 'ConfiguracionUsuarioModificar'
+1422558347015	Rename type 'ConfiguracionUsuarioPrincipal'
+1422558481391	Rename type 'ConfiguracionUsuarioRedireccion'
+1422559658696	Rename type 'ConfiguracionUsuarioSeleccionar'
+1422560157798	Rename resource 'configuracion_usuario_principal.xml'
+1422560235983	Rename resource 'confiuracion_usuario_agregar.xml'
+1422560493922	Rename resource 'configuracion_usuario_redireccion.xml'
+1422560559388	Rename resource 'confiuracion_usuario_modificar.xml'
+1422560664267	Rename resource 'confiuracion_usuario_seleccionar.xml'
+1422560801693	Delete element
+1422563761292	Delete elements
+1422566778258	Delete element
+1422570631102	Move compilation unit
+1422576268035	Rename field 'imgUserIconItem'
+1422596021955	Delete element
+1422596178763	Rename resource 'person_ic.png'
+1422596668129	Delete element
+1422596776771	Delete elements
+1422597207435	Delete element
+1422597289621	Rename type 'AgeManagerActivity'

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+     >
+
+    <!-- TextView
+        android:id="@+id/textView_StadisticsDetails_Title"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/blue2_button"
+        android:gravity="center|left"
+        android:paddingTop="10dp"
+        android:text="@string/stadistics_details_title"
+        android:textColor="@color/white"
+        android:textSize="20sp" /-->
+
+    <ListView
+        android:id="@+id/listView_StadisticsDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+</LinearLayout>

@@ -1,0 +1,35 @@
+package com.tesisyux.realidadaumentada;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+
+public class DataBaseManager {
+
+	
+	public static final String TABLE_NAME = "respuesta";
+	
+	public static final String CN_ID ="idRespuesta";
+	public static final String CN_Respuesta = "respuesta";
+
+	
+	public static final String CREATE_TABLE = "create table " + TABLE_NAME +" ("
+			+ CN_ID + " integer primary key autoincrement,"
+			+ CN_Respuesta + " text not null);";
+	
+	private DataBaseHelper helper;
+	private SQLiteDatabase db;
+	
+	public DataBaseManager(Context context){
+		
+		helper = new DataBaseHelper(context);
+		db = helper.getWritableDatabase();
+	}
+	
+	public void insertar(String resultado){
+		//en el null tiene que ir los campos que pueden se null en la tabla
+		db.insert(TABLE_NAME, null, );
+		
+	}
+	
+	
+}

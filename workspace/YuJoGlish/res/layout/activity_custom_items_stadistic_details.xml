@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" 
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/tv_stadistic_details_IconItem"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="20dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/stadistic_item_icon_hdpi" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:layout_weight="1" >
+
+        <TextView
+            android:id="@+id/tv_stadistic_details_nombrePalabra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:text="Nombre"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/indigo_600"
+            android:textStyle="bold"
+            android:typeface="normal" />
+
+        <TextView
+            android:id="@+id/tv_stadistic_details_Aciertos"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="2dp"
+            android:text="Aciertos: 4"
+            android:textColor="@color/indigo_400"
+            android:textSize="12dp"
+            android:typeface="normal" />
+
+        <TextView
+            android:id="@+id/tv_stadistic_details_Intentos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="3dp"
+            android:text="Intentos: 10"
+            android:textColor="@color/indigo_400"
+            android:textSize="12dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

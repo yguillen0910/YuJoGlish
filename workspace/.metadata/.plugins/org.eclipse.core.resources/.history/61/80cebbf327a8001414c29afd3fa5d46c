@@ -1,0 +1,212 @@
+package com.tesisyux.realidadaumentada.configuracion.usuario;
+
+
+import java.sql.Date;
+
+import com.tesisyux.realidadaumentada.DataBaseHelper;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+public class DbManagerConfigUsuario {
+
+	public static final String TABLE_USUARIO = "usuario";
+	
+	public static final String CN_ID = "_id";
+	public static final String CN_nusuario = "nombre_usuario";
+	public static final String CN_fnacimiento = "fecha_nacimiento";
+	public static final String CN_estado = "estado_usuario";
+	
+	// create table palabras(_id integer primary key autoincrement,
+	// 						  palabra text not null,
+	//						  categoria text)
+	
+	public static final String CREATE_TABLE = "create table "+TABLE_USUARIO+ " ("
+				+CN_ID+" integer primary key autoincrement,"
+				+CN_nusuario+" nombre text not null,"
+				+CN_fnacimiento+" text not null," 
+				+CN_estado+" text not null);";
+	
+	private DataBaseHelper helper;
+	private SQLiteDatabase db;
+	private ContentValues valores;
+	
+	public DbManagerConfigUsuario(Context context){
+		
+		helper = new DataBaseHelper(context);
+		//devuelve la base de datos en modo escritura (Si la base de datos no existe la crea y la devuelve)
+		db = helper.getWritableDatabase();
+		
+		valores = new ContentValues();
+				
+	}
+	
+	//Devuelve -1 si dio error
+			//db.execSQL("");
+			//Devuelve un cursor
+			//db.rawQuery("","");
+			
+			//Para realizar una insercion
+	
+	public Cursor cargarCursorUsuario() {
+		
+		String[] columnas = new String[]{CN_ID,CN_nusuario,CN_fnacimiento,CN_estado};
+		
+		return db.query(TABLE_USUARIO, columnas, null, null, null, null, null);
+	}
+	
+	
+	public Cursor cargarCursorUsuarioActivo() {
+		
+		String[] columnas = new String[]{CN_ID,CN_nusuario,CN_fnacimiento,CN_estado};
+		
+		return db.query(TABLE_USUARIO, columnas, CN_estado+"=?", new String[]{"a"}, null, null, null);
+	}
+	
+	/**
+	 * Agrega un usuario ACTIVO a la base de datos despues de desactivar el usuario activo actual. Los valores no pueden ser nulos
+	 * */
+	public void insertarUsuario(String nombre, String fnacimiento, String estado){
+		
+		desactivarUsuarios();
+		valores.clear();
+		valores = contenedorValores(valores,CN_nusuario, nombre);
+		valores = contenedorValores(valores,CN_fnacimiento, fnacimiento);
+		valores = contenedorValores(valores,CN_estado, estado);
+		db.insert(TABLE_USUARIO, "nombre_usuario",valores);
+		
+	}
+	
+	/**
+	 * Desactiva todos los usuarios usuarios antes de agregar un nuevo usuario
+	 * */
+	private void desactivarUsuarios(){
+		
+		ContentValues valores = simpleContenedorValores(CN_estado,"i");
+		
+		db.update(TABLE_USUARIO,valores,CN_estado+"=?",new String[]{"a"});
+		
+	}
+	
+	
+	/**
+	 * Recibe el id del usuario que va a activar y desactiva el usuario actualmente activo en la bd
+	 * */
+	public void activarUsuario(String id){
+		
+		Cursor aux = cargarCursorUsuarioActivo();
+		if (aux.moveToFirst())
+		{
+			if (!aux.getString(0).matches(id)){
+				desactivarUsuarios();
+				ContentValues valores = simpleContenedorValores(CN_estado,"a");
+				db.update(TABLE_USUARIO,valores,CN_ID+"=?",new String[]{id});
+			}
+		}
+	}
+	
+	public void insertarUsuarioConSQLExec(String nombre, String fnacimiento, String estado){
+		
+			db.execSQL("insert into "+TABLE_USUARIO+ " values (null,'"+nombre+"','"+fnacimiento+"','"+estado+"')");
+	}
+	
+	private ContentValues contenedorValores(ContentValues valores,String campo, String valor){
+		
+		valores.put(campo, valor);	
+		return valores;
+	}
+	
+	private ContentValues simpleContenedorValores(String campo, String valor){
+	    ContentValues valores = new ContentValues();
+		valores.put(campo, valor);	
+		return valores;
+	}
+	
+	public void eliminarUsuario(String nombre){
+		
+		
+		String[] vector = new String[]{nombre};
+		//db.delete(TABLE_USUARIO, null, null);
+		db.delete(TABLE_USUARIO,CN_nusuario+"=?", vector );
+		
+	}
+	
+	
+	//FALTA PROBAR ESTE METODO
+	public void modificarUsuario(int id, String nombre){
+		
+		ContentValues valores = simpleContenedorValores(CN_ID, ""+id);
+		//Nombre tabla, Valores a actualizar, Clausula Where y Valor del where
+		db.update(TABLE_USUARIO,contenedorValores(valores, CN_nusuario, nombre) , CN_ID+"=?", new String[]{""+id});
+	}
+	
+	public void modificarUsuarioActivo(String nombre, String fechaNac){
+		
+		ContentValues valores = simpleContenedorValores(CN_nusuario, nombre);
+		valores = contenedorValores(valores,CN_fnacimiento,fechaNac);
+		db.update(TABLE_USUARIO,valores,CN_estado+"=?",new String[]{"a"});
+		//ContentValues valores = simpleContenedorValores(CN_ID, ""+id);
+		//Nombre tabla, Valores a actualizar, Clausula Where y Valor del where
+		//db.update(TABLE_USUARIO,contenedorValores(valores, CN_nusuario, nombre) , CN_ID+"=?", new String[]{""+id});
+	}
+	
+	//FALTA PROBAR TAMBIEN
+	public void modificarEstadoUsuarioPorNombre(String nombre, String estado){
+		
+		ContentValues valores  = new ContentValues();
+		valores.put(CN_estado, estado);
+		/*
+		 * 
+		ContentValues args = new ContentValues();
+    	args.put(KEY_NAME, name);
+    	args.put(KEY_EMAIL, email);
+    	return db.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
+		 * 
+		 * */
+		//ContentValues valores = simpleContenedorValores(CN_nusuario, ""+nombre);
+		//Nombre tabla, Valores a actualizar, Clausula Where y Valor del where
+		//db.update(TABLE_USUARIO,contenedorValores(valores, CN_nusuario, palabra) , CN_ID+"=?", new String[]{""+id});
+		db.update(TABLE_USUARIO, valores, CN_nusuario+"=?",  new String[]{nombre});
+	}
+	
+	//FALTA PROBAR TAMBIEN
+		public void modificarEstadoUsuarioPorId(Integer id, String estado){
+			
+			ContentValues valores  = new ContentValues();
+			valores.put(CN_estado, estado);
+			db.update(TABLE_USUARIO, valores, CN_ID+"=?",  new String[]{id.toString()});
+		}
+	
+	public void modificarUsuario(String nombre, String fnacimiento){
+		
+		ContentValues valores = simpleContenedorValores(TABLE_USUARIO, CN_nusuario);
+		//Nombre tabla, Valores a actualizar, Clausula Where y Valor del where
+		db.update(TABLE_USUARIO,contenedorValores(valores, CN_fnacimiento, fnacimiento) , TABLE_USUARIO+"=?", new String[]{nombre});
+	}
+	
+	
+	public Cursor cargarCursorUsuarioEspecifico(String usuario) {
+		
+		String[] columnas = new String[]{CN_ID,CN_nusuario,CN_fnacimiento};
+		
+		return db.query(TABLE_USUARIO, columnas, CN_nusuario+"=?", new String[]{usuario}, null, null, null);
+	}
+	
+	public Cursor cargarCursorUsuariosParecidos(String usuario) {
+		
+		String[] columnas = new String[]{CN_ID,CN_nusuario,CN_fnacimiento};
+		
+		return db.query(TABLE_USUARIO, columnas, CN_nusuario+" like ?", new String[]{"%"+usuario+"%"}, null, null, null);
+	}
+	
+	/**
+	 * Elimino los datos de la tabla Usuario
+	 * */
+	public void borrarTabla() {
+		
+		db.delete(TABLE_USUARIO, null, null);
+	}
+}
+

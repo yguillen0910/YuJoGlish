@@ -1,0 +1,512 @@
+/*
+ * @(#) LearnActivity.java  1 27/02/15
+ * 
+ * Copyrigth (c) 2015 Jorge Hernández, Yuzmhar Guillén
+ * Caracas, Venezuela
+ * Todos los derechos reservados.
+ *   
+ */
+
+package com.yujoglish;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.lang3.text.WordUtils;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.media.MediaPlayer;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import com.metaio.sdk.ARViewActivity;
+import com.metaio.sdk.MetaioDebug;
+import com.metaio.sdk.jni.IGeometry;
+import com.metaio.sdk.jni.IMetaioSDKCallback;
+import com.metaio.sdk.jni.TrackingValues;
+import com.metaio.sdk.jni.TrackingValuesVector;
+import com.metaio.tools.io.AssetsManager;
+import com.yujoglish.configuracion.usuario.AgeManager;
+import com.yujoglish.dbhelper.DataBaseManager;
+import com.yujoglish.model.Palabra;
+
+
+/**
+ * Clase que muestra objetos en tercera dimensión a partir 
+ * de escanear un ID Marker de metaio, además muestra el nombre
+ * del objeto a escanear y reproduce el nombre del objeto.
+ * 
+ * @author Yuzmhar Guillén
+ * @version 1, 27/02/2015 
+ */
+public class LearnActivity extends ARViewActivity {
+	
+	/*
+	 * Ruta y Nombre de la actividad a la cual
+	 * se le enviará la información
+	 */
+	final static String POSICION_lEARN = "com.yujoglish.LearnActivity"; 
+	
+	/*
+	 * Modelo que se representará en tercera dimensión 
+	 */
+	private IGeometry model = null;
+	
+	/*
+	 * Metaio SDK callback handler
+	 */
+	private MetaioSDKCallbackHandler mCallbackHandler;
+	
+	/*
+	 * Tiempo en que inicia la actividad
+	 */
+	private String tiempoInicio = null;
+	
+	/*
+	 * Tiempo en que termina la actividad
+	 */
+	private String tiempoFin = null; 
+	
+	/*
+	 * Posicion de la palabra actual  
+	 */
+	private String posicionPalabra = null;
+	
+	/*
+	 * Nombre de la lección 
+	 */
+	private String nombreLeccion = null;
+	
+	/*
+	 * Número de lección 
+	 */
+	private String numeroLeccion = null;
+	
+	/*
+	 * Nombre de palabra actual
+	 */
+	private String nombrePalabra = null;
+	
+	/*
+	 * Identificador de palabra actual
+	 */
+	private Integer idPalabra;
+	
+	/*
+	 * Manejador de Base de datos
+	 */
+	DataBaseManager manager;
+		
+	/** 
+	 * Metodo que se llama cuando se creó por primera vez la actividad.
+	 * Se crean la vistas
+	 * Se inicializan las variables
+	 * Se obtiene el tiempo en que se inicia la actividad
+	 * 
+	 * @see com.metaio.sdk.ARViewActivity#onCreate(android.os.Bundle)
+	 */
+	@Override
+	public void onCreate(Bundle savedInstanceState) 
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_learning);
+				
+		mCallbackHandler = new MetaioSDKCallbackHandler();
+		inicializarVariables();
+		tiempoInicio = AgeManager.obtenerTiempo();			
+	}
+	
+	/**
+	 * Metodo para inicializar variables a utilizar
+	 */
+	private void inicializarVariables() 
+	{
+		String infoRecibidaMenu = null;
+		String infoRecibidaLearn = null;
+		String[] partes;
+		Palabra palabra;
+		
+		//objeto para acceder a la bd
+		manager = new DataBaseManager(this);
+		
+		//TextView al que se le seteará la palabra seleccionada actualmente
+		TextView palabraTv = (TextView) mGUIView.findViewById(R.id.tVWord);
+		
+		//Mensaje obtenido de la pantalla anterior	
+		Intent mensaje = getIntent();
+		infoRecibidaMenu = mensaje.getStringExtra(MenuActivity.LEVEL_INFO);
+		infoRecibidaLearn = mensaje.getStringExtra(LearnActivity.POSICION_lEARN);
+						
+		if (infoRecibidaMenu != null){
+			partes = infoRecibidaMenu.split("-");
+		}
+		else{
+			partes = infoRecibidaLearn.split("-");
+		}
+		
+		//se obtiene la posición de la palabra actual
+		posicionPalabra = partes[0]; 
+		
+		//se obtiene la lección actual
+		nombreLeccion = partes[1]; 
+		
+		//se obtine el númnero de la lección a partir del nombre de la lección 
+		numeroLeccion = manager.buscarLeccionPorNombre(nombreLeccion);
+		
+		/*
+		 * se obtiene la palabra actual, la cual es buscada 
+		 * a partir de la posición y el número de la lección
+		 */
+		palabra = manager.buscarPalabraPorPosicionLeccion(posicionPalabra, numeroLeccion);
+		
+		//se obtiene el nombre de la palabra
+		nombrePalabra = palabra.getNombre();
+		
+		//se obtiene el id de la palabra
+		idPalabra = palabra.getIdPalabra();
+		
+		//se setea el nombre de la palabra al textView creado anteriormente
+		String wordStr = WordUtils.capitalizeFully(nombrePalabra);
+		palabraTv.setText(wordStr);		
+	}
+	
+	/**
+	 *  Método que realiza la limpieza final, 
+	 * antes de que se destruya la actividad.
+	 * 
+	 * @see com.metaio.sdk.ARViewActivity#onDestroy()
+	 */
+	@Override
+	protected void onDestroy() 
+	{
+		super.onDestroy();
+		this.finish();
+	}
+	
+	/**
+	 * Método que utiliza el MetaioSDK para obtener el
+	 * Layout de la actividad
+	 * 
+	 * @see com.metaio.sdk.ARViewActivity#getGUILayout()
+	 */
+	@Override
+	protected int getGUILayout() 
+	{
+		return R.layout.activity_learning; 
+	}
+	
+	/**
+	 * Método que se ejecuta al hacer click, en el botón exit
+	 * @param v vista actual
+	 */
+	public void onExitButtonClick(View v)
+	{
+		tiempoFin = AgeManager.obtenerTiempo();		
+		Long diferencia = AgeManager.diferenciaEntreTiempos(tiempoInicio, tiempoFin);
+		
+		guardarTiempoLearnPalabraUsuario(diferencia.intValue());
+		
+		this.finish();
+	}
+	
+	/**
+	 * Método encargado de cargar el contenido de MetaioSDK
+	 *  por ejemplo, datos de seguimiento,Geometrías etc.
+	 *  
+	 * @see com.metaio.sdk.ARViewActivity#loadContents()
+	 */
+	@Override
+	protected void loadContents() 
+	{
+		try	{
+			final String trackingConfigFile;
+			final String modelPath;
+			String rutaXml = nombreLeccion.toLowerCase()+"/"+nombreLeccion.toLowerCase();
+			String rutaObj = nombreLeccion.toLowerCase()+"/"+nombrePalabra;
+			
+			String path = getApplicationContext().getFilesDir().getAbsolutePath()+"/metaioAssets";
+			File f = new File(path);
+			f.mkdirs();
+			AssetsManager.extractAllAssets(getApplicationContext(), "metaioAssets",true);
+			System.out.println("AssetsM "+AssetsManager.getAbsolutePath());
+			/*
+			 * obteniendo data del archivo xml que contiene los targets a usar			
+			 */
+			trackingConfigFile = AssetsManager.getAssetPath(getApplicationContext(), rutaXml+".xml");
+			
+			final boolean result = metaioSDK.setTrackingConfiguration(trackingConfigFile);
+			MetaioDebug.log(Log.INFO, "data loaded: " + result);
+				
+			//cargando el modelo 		
+			modelPath = AssetsManager.getAssetPath(getApplicationContext(), rutaObj+".obj");
+			
+			System.out.println("modelPath "+modelPath);
+			if (modelPath != null){
+				
+				//creando la geometría
+				model = metaioSDK.createGeometry(modelPath);
+				System.out.println("JORGEEE ESTE ES EL PATH "+modelPath);
+				MetaioDebug.log(Log.INFO, "model loaded " + modelPath);
+				try	{
+					MetaioDebug.log(Log.INFO, "nombre del modelo " + model.getName());
+				}catch (Exception e) {
+					MetaioDebug.log(Log.ERROR, "error obteniendo nombre del modelo");
+				}
+				
+				//se asigna el target con el que se mostrará el modelo 
+				model.setCoordinateSystemID(Integer.parseInt(posicionPalabra));
+				
+				if (model != null) {
+					model.setScale(2.f);
+				}else{
+					MetaioDebug.log(Log.ERROR, "Error loading geometry: " + modelPath);
+				}
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+			MetaioDebug.log(Log.ERROR, "Falla Load Contents: "+e.getMessage());
+		}
+	}
+
+	/**
+	 * Proporciona controlador callback SDK si se desea.
+	 * @return Regreso controlador callback sdk
+	 * 
+	 * @see com.metaio.sdk.ARViewActivity#getMetaioSDKCallbackHandler()
+	 */
+	@Override
+	protected IMetaioSDKCallback getMetaioSDKCallbackHandler() 
+	{
+		return mCallbackHandler;
+	}
+	
+	/**
+	 * Clase implementada para el uso y modificación del método onTrackingEvent
+	 * lo que permitió la asociación de un modelo con un target. 
+	 * 
+	 * @author Yuzmhar Guillén
+	 */
+	final private class MetaioSDKCallbackHandler extends IMetaioSDKCallback 
+	{
+		/**
+		 * Muestra GUI después de que el SDK este listo
+		 * @see com.metaio.sdk.jni.IMetaioSDKCallback#onSDKReady()
+		 */
+		@Override
+		public void onSDKReady() 
+		{		
+			runOnUiThread(new Runnable(){
+				@Override
+				public void run(){
+					mGUIView.setVisibility(View.VISIBLE);
+				}
+			});
+		}
+		
+		/**
+		 * Método para detectar los targets
+		 * si detectamos cualquier objetivo, ligamos la geometría cargado a este objetivo
+		 * 
+		 * @see com.metaio.sdk.jni.IMetaioSDKCallback#onTrackingEvent(com.metaio.sdk.jni.TrackingValuesVector)
+		 */
+		@Override
+		public void onTrackingEvent(TrackingValuesVector trackingValues)
+		{
+			if(model != null){
+				for (int i=0; i<trackingValues.size(); i++)	{
+					final TrackingValues tv = trackingValues.get(i);
+					if ((tv.isTrackingState()) 
+							&& (tv.getCoordinateSystemID() == model.getCoordinateSystemID())) {
+						System.out.println("COORDINATE SYSTEM ID "+tv.getCoordinateSystemID());
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Método que se llama cuando la geometría es tocada
+	 * @see com.metaio.sdk.ARViewActivity#onGeometryTouched(com.metaio.sdk.jni.IGeometry)
+	 */
+	@Override
+	protected void onGeometryTouched(IGeometry geometry) {
+		// TODO Auto-generated method stub
+	}
+	
+	/**
+	 * Método que se ejecuta al hacer click en botón Listen 
+	 * el mismo reproduce un sonido
+	 * @param v vista actual
+	 */
+	public void onListenButtonClick(View v) {
+		String rutaSonido = nombreLeccion.toLowerCase()+"/"+nombrePalabra;
+		playSound(rutaSonido);
+	}
+	
+	/**
+	 * Método que se ejecuta al hacer click en botón next 
+	 * el mismo me enviará a la próxima pantalla Learn
+	 * @param v vista actual
+	 */
+	public void onNextLearnButtonClick(View v) 
+	{
+		ImageButton next = (ImageButton) mGUIView.findViewById(R.id.IBNextLearn);
+		next.setBackgroundResource(R.drawable.grey_bg_oval);
+		next.setEnabled(false);
+		next.setClickable(false); 
+		nextLearn();
+	}
+	
+	/**
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onRestart()
+	 */
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+	}
+	
+	/**
+	 *  Método para enviar información a siguiente actividad
+	 *  acerca de que objeto debe mostrar y finaliza la pantalla actual
+	 */
+	private void nextLearn(){
+		
+		Integer p = Integer.parseInt(posicionPalabra)+1;
+		String infoEnvio = null;
+		
+		//obtengo la cantidad de palabras que puede visualizar el usuario Activo
+		int cantidadPalabras = manager.obtenerCantPalabrasUsuarioActivo(nombreLeccion);
+		if(p<=cantidadPalabras){
+			Intent myIntent = new Intent (this , LearnActivity.class);
+			infoEnvio = p.toString()+"-"+nombreLeccion;
+			myIntent.putExtra(POSICION_lEARN, infoEnvio);
+			startActivity(myIntent);
+		}
+		else{
+			//Intent myIntent = new Intent (this , LessonActivity.class);
+			//startActivity(myIntent);
+			
+			Intent myIntent = new Intent (this , FinishActivity.class);
+			myIntent.putExtra(POSICION_lEARN, "Has Finalizado La Lecciòn");
+			startActivity(myIntent);
+			
+			
+		}
+		tiempoFin = AgeManager.obtenerTiempo();
+		Long diferencia = AgeManager.diferenciaEntreTiempos(tiempoInicio, tiempoFin);
+		
+		/*if (diferencia > 60){
+			int min = (int) (diferencia/60);
+			int seg = (int) (diferencia - (min * 60))/100;
+			float b= min+seg;
+			System.out.println("min "+min + " seg "+seg+" b "+b);
+		}*/
+		guardarTiempoLearnPalabraUsuario(diferencia.intValue());
+		this.finish();
+	}
+	
+	/**
+	 * Método para guardar tiempo en que estuvo activa la actividad
+	 * @param tiempo Tiempo que estuvo activa la actividad
+	 */
+	private void guardarTiempoLearnPalabraUsuario(Integer tiempo)
+	{	
+		/*
+		 * Tiempo acumulado en que ha aprendido una palabra 
+		 */
+		Integer tiempoLearn = null;
+		
+		/*
+		 * Identificador de la tabla Usuario_Palabra
+		 */
+		Integer idUsuarioPalabra = null;
+		
+		/*
+		 * Cursor usuariActivo
+		 */
+		Cursor cursorUsuarioActivo = null;
+		
+		/*
+		 * Identificador de usuario activo
+		 */
+		String idUsuarioActivo = null;
+		
+		cursorUsuarioActivo = manager.cargarCursorUsuarioActivo();	
+		if (cursorUsuarioActivo.moveToNext()){ 
+			idUsuarioActivo = cursorUsuarioActivo.getString(cursorUsuarioActivo.getColumnIndex(manager.CN_ID_USUARIO));
+		}
+		
+		Cursor cusorPalabraUsuario = manager.obtenerUsuarioPalabraPorTipo(idUsuarioActivo, idPalabra.toString(), "word");
+		if (cusorPalabraUsuario.moveToNext()) {
+			tiempoLearn = cusorPalabraUsuario.getInt(cusorPalabraUsuario.getColumnIndex(manager.CN_TIEMPO_LEARN))+tiempo;
+			idUsuarioPalabra = cusorPalabraUsuario.getInt(cusorPalabraUsuario.getColumnIndex(manager.CN_ID_USUARIO_PALABRA));
+			
+			manager.actualizarTiempoLearnUsuarioPalabra(idUsuarioPalabra.toString(), tiempoLearn.toString());
+		}else{
+			manager.insertarUsuarioPalabra(idUsuarioActivo, idPalabra.toString(), "0", "0", "word", tiempo.toString(),"0");
+		}
+	}
+	
+	/**
+	 * Método encargado de reproducir sonidos
+	 * @param ruta ruta en donde se encuentra el archivo .mp3 a reproducir
+	 */
+	public void playSound(String ruta) {
+		final AssetManager assetManager = getAssets();
+        try {
+			// for assets folder add empty string
+                        String[] filelist = assetManager.list("");
+                        // for assets/subFolderInAssets add only subfolder name
+                        String[] filelistInSubfolder = assetManager.list("shapes");
+			if (filelist == null) {
+			    // dir does not exist or is not a directory
+			} else {
+			    for (int i=0; i<filelist.length; i++) {
+			        // Get filename of file or directory
+			        String filename = filelist[i];
+			        System.out.println("FileList "+filename);
+			    }
+			}
+			if (filelistInSubfolder == null) {
+			    // dir does not exist or is not a directory
+			} else {
+			    for (int i=0; i<filelistInSubfolder.length; i++) {
+			        // Get filename of file or directory
+			        String filename2 = filelistInSubfolder[i];
+			        System.out.println("filelistInSubfolder "+filename2);
+			    }
+			}
+ 
+                        // if(filelistInSubfolder == null) ............  
+ 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+		    	AssetFileDescriptor sonido = getAssets().openFd(ruta+".mp3");
+		    	System.out.println("Sonido "+sonido.getFileDescriptor()+" assetfiledescriptor "+sonido);
+			
+		    	MediaPlayer player = new MediaPlayer();
+		    	player.setDataSource(sonido.getFileDescriptor(),sonido.getStartOffset(),sonido.getLength());
+		    	player.setLooping(false);
+		    	player.prepare();
+		    	player.start();
+		}catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("ERRORRRR "+e.getMessage());
+
+		}
+	}
+}

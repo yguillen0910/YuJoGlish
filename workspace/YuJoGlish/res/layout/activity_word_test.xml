@@ -1,0 +1,96 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".WordTestActivity" >
+
+    <ImageButton
+        android:id="@+id/IBExit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="@android:color/transparent"
+        android:onClick="onButtonClick"
+        android:src="@drawable/close_ic" />
+    
+     <LinearLayout
+         android:id="@+id/buttonBarHomeSuperior"
+         style="@android:style/ButtonBar"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_alignParentBottom="true"
+         android:layout_alignRight="@+id/IBExit"
+         android:background="@android:color/transparent"
+         android:gravity="center"
+         android:orientation="horizontal" >
+        
+          <Button
+              android:id="@+id/bOpcionUno"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_margin="5dp"
+              android:layout_weight="1"
+              android:onClick="onOpcionUnoButtonClick"
+              android:padding="@dimen/activity_horizontal_margin"
+              />
+          
+            <Button
+                android:id="@+id/bOpcionDos"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:onClick="onOpcionDosButtonClick"
+                android:padding="@dimen/activity_horizontal_margin"
+                 />
+            
+    </LinearLayout>
+
+     <LinearLayout
+         android:id="@+id/buttonBarHomeInferior"
+         style="@android:style/ButtonBar"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_above="@+id/buttonBarHomeSuperior"
+         android:layout_alignLeft="@+id/buttonBarHomeSuperior"
+         android:background="@android:color/transparent"
+         android:gravity="center"
+         android:orientation="horizontal" >
+
+         <Button
+             android:id="@+id/bOpcionTres"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:layout_margin="5dp"
+             android:layout_weight="1"
+             android:onClick="onOpcionTresButtonClick"
+             android:padding="@dimen/activity_horizontal_margin"
+         />
+
+         <Button
+             android:id="@+id/bOpcionCuatro"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:layout_margin="5dp"
+             android:layout_weight="1"
+             android:onClick="onOpcionCuatroButtonClick"
+             android:padding="@dimen/activity_horizontal_margin"
+           />
+
+     </LinearLayout>
+
+     <ImageView
+         android:id="@+id/iVCorrecion"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_centerHorizontal="true"
+         android:layout_centerVertical="true"
+         android:src="@drawable/correct_ic" />
+
+     
+          
+</RelativeLayout>

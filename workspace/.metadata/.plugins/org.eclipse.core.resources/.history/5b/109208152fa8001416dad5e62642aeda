@@ -1,0 +1,147 @@
+package com.tesisyux.realidadaumentada.configuracion.usuario;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.tesisyux.realidadaumentada.R;
+import com.tesisyux.realidadaumentada.customadapter.AdapterListViewActivity;
+import com.tesisyux.realidadaumentada.customadapter.CustomItemActivity;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class SelectUserActivity2 extends Activity{
+	
+	private ArrayList<CustomItemActivity> items = new ArrayList<CustomItemActivity>();
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_select_user2);
+		
+		llenarLista();
+		llenarListView();
+		clickItem();
+		
+		
+		
+	}
+	
+	private void llenarLista() {
+		
+		DbManagerConfigUsuario manager = new DbManagerConfigUsuario(this);
+		 
+		
+			manager.insertarUsuario("Daniela", "01/01/2010", "a");
+			manager.insertarUsuario("Juan", "01/01/2012", "i");
+			manager.insertarUsuario("Jose", "01/01/2009", "i");
+			manager.insertarUsuario("Jenny", "01/01/2008", "i");
+			
+		Cursor cursor = manager.cargarCursorUsuario();
+		String edad;
+		if(cursor.moveToFirst())
+		for (int i = 0; i < cursor.getCount(); i++) {
+			edad = "Edad: " + AgeManagerActivity.edad(cursor.getString(2))+" años";
+			if (cursor.getString(3).matches("a")){
+			items.add(new CustomItemActivity(cursor.getString(1) + "(Activo)", edad, "", 0 + (int)(Math.random()*72), 72));
+			}
+			else items.add(new CustomItemActivity(cursor.getString(1), edad, "", 0 + (int)(Math.random()*72), 72));
+			cursor.moveToNext();
+		}
+		else{
+			
+			items.add(new CustomItemActivity("NO HAY USUARIO CREADO", "", "", 0, 72));
+			/*items.add(new CustomItemActivity("Daniela", "3 años", "", 0 + (int)(Math.random()*72), 72));
+			items.add(new CustomItemActivity("Juan", "6 años", "", 0 + (int)(Math.random()*72), 72));
+			items.add(new CustomItemActivity("Luis", "4 años", "", 0 + (int)(Math.random()*72), 72));
+			items.add(new CustomItemActivity("Jenny", "5 años", "", 0 + (int)(Math.random()*72), 72));*/
+		}
+		
+		
+		
+		
+	}
+	
+	private void llenarListView() {
+		
+		ArrayAdapter<CustomItemActivity> adapter = new MyListAdapter();
+		ListView users = (ListView) findViewById(R.id.lVSelectUser);
+		users.setAdapter(adapter);
+		
+		
+		
+	}
+	
+	private void clickItem() {
+		
+		ListView users = (ListView) findViewById(R.id.lVSelectUser);
+		
+		users.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View viewClicked,
+			int position, long id) {
+
+			CustomItemActivity clicked = items.get(position);
+			String message = "You clicked position " + position
+			+ " su nombre es " + clicked.getNombre();
+			Toast.makeText(SelectUserActivity2.this, message, Toast.LENGTH_LONG).show();
+			}
+			});
+		
+	}
+
+	private class MyListAdapter extends ArrayAdapter<CustomItemActivity>{
+
+		public MyListAdapter() {
+			super(SelectUserActivity2.this, R.layout.activity_custom_items, items);
+			// TODO Auto-generated constructor stub
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			
+			View view = convertView;
+			
+			if(view == null){
+				view = getLayoutInflater().inflate(R.layout.activity_custom_items, null);
+			}
+			
+			CustomItemActivity item = items.get(position);
+			
+			TextView userName = (TextView) view.findViewById(R.id.tVUserName);
+			userName.setText(item.getNombre());
+			
+			TextView userAge = (TextView) view.findViewById(R.id.tVUserAge);
+			userAge.setText(item.getEdad());
+			
+			TextView userWords = (TextView) view.findViewById(R.id.tVUserWords);
+			userWords.setText(item.getPalabras());
+			
+			ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.pBUser);
+			progressBar.setMax(item.getTotalPalabra());
+			progressBar.setProgress(item.getCantidadPalabra());
+			
+			ImageView image = (ImageView) view.findViewById(R.id.iVUserIconItem);
+					image.setImageResource(R.drawable.person_ic);
+					
+			return view;
+		}
+		
+		
+	}
+	  
+}

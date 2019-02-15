@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.yujoglish"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="21" />
+    
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- These permissions are only needed for debugging -->
+    <uses-permission android:name="android.permission.SET_DEBUG_APP" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <uses-feature android:name="android.hardware.camera"/>
+
+    <application
+     	android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+         <activity 
+			android:name="com.yujoglish.LevelActivity" 
+        	android:label="@string/app_name"
+        	android:screenOrientation="portrait">
+        </activity>
+		<activity
+		    
+            android:name="com.yujoglish.LessonActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+        </activity>
+		<activity
+            android:name="com.yujoglish.MenuActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name="com.yujoglish.TestActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+		</activity>
+        <activity
+            android:name="com.yujoglish.WordTestActivity"
+            android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen"
+            android:theme="@style/Theme.NoTitle" 
+            android:screenOrientation="portrait">              
+        </activity>
+		<activity
+            android:name="com.yujoglish.VoiceTestActivity"
+            android:theme="@style/Theme.NoTitle" 
+            android:screenOrientation="portrait">
+        </activity>  		
+        <activity
+            android:name="com.yujoglish.MainActivity"
+            android:theme="@style/Theme.NoTitle" 
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name="com.yujoglish.LoadActivity"
+            android:theme="@style/Theme.NoTitle" 
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.yujoglish.PrincipalActivity"
+            android:theme="@style/Theme.NoTitle" 
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name="com.yujoglish.LearnActivity"
+            android:theme="@style/Theme.NoTitle" 
+            android:screenOrientation="portrait">
+        </activity>
+        <activity 
+            android:name="com.yujoglish.configuracion.usuario.SelectUserActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity 
+            android:name="com.yujoglish.configuracion.usuario.AddUserActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity 
+            android:name="com.yujoglish.configuracion.usuario.ModifyUserActivity"
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait">
+        </activity>
+        <activity 
+            android:name="com.yujoglish.configuracion.usuario.PrincipalUserActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity 
+            android:name="com.yujoglish.configuracion.usuario.RedirectionUserActivity"
+            android:theme="@style/Theme.NoTitle"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.yujoglish.WordPracticeActivity"
+            android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen"
+            android:theme="@style/Theme.NoTitle" 
+            android:screenOrientation="portrait">              
+        </activity>
+        <activity
+            android:name="com.yujoglish.VoicePracticeActivity"
+            android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen"
+            android:theme="@style/Theme.NoTitle" 
+            android:screenOrientation="portrait">              
+        </activity>
+        <activity android:name="com.yujoglish.util.Util"
+            	  android:theme="@style/Theme.NoTitle" >
+       	</activity>
+       	<activity android:name="com.yujoglish.stadistics.StadisticsMainActivity"
+            	  android:label="@string/app_name"
+            	  android:screenOrientation="portrait">
+       	</activity>
+       	<activity android:name="com.yujoglish.stadistics.StadisticsDetailsActivity"
+            	  android:label="@string/app_name"
+            	  android:screenOrientation="portrait">
+       	</activity>
+       	<activity android:name="com.yujoglish.FinishActivity"
+            	  android:theme="@style/Theme.NoTitle" 
+            	  android:screenOrientation="portrait">
+       	</activity>
+       	<activity android:name="com.yujoglish.FTPActivity"
+            	  android:theme="@style/Theme.NoTitle" 
+            	  android:screenOrientation="portrait">
+            <!-- intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter-->
+       	</activity>
+       	<!-- activity android:name="com.yujoglish.webservices.CorrectionActivity"
+            	  android:theme="@style/Theme.NoTitle" 
+            	  android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+       	</activity-->
+    </application>
+</manifest>

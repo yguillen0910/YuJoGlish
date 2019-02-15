@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy 5 elements to &apos;values&apos;&#x0D;&#x0A;- Original project: &apos;RealidadAumentada&apos;&#x0D;&#x0A;- Destination element: &apos;values&apos;&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     colors.xml&#x0D;&#x0A;     dimens.xml&#x0D;&#x0A;     strings.xml&#x0D;&#x0A;     themes.xml&#x0D;&#x0A;     styles.xml" description="Copy files" element1="res/values/colors.xml" element2="res/values/dimens.xml" element3="res/values/strings.xml" element4="res/values/themes.xml" element5="res/values/styles.xml" files="5" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1426466594749" target="/YuJoGlish/res/values" units="0" version="1.0"/>
+</session>

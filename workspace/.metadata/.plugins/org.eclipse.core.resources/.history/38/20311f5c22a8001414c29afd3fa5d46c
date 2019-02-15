@@ -1,0 +1,99 @@
+package com.tesisyux.realidadaumentada.configuracion.usuario;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.tesisyux.realidadaumentada.R;
+import com.tesisyux.realidadaumentada.customadapter.AdapterListViewActivity;
+import com.tesisyux.realidadaumentada.customadapter.CustomItemActivity;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+public class SelectUserActivity2 extends Activity{
+	
+	private ArrayList<CustomItemActivity> items = new ArrayList<CustomItemActivity>();
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_select_user2);
+		
+		llenarLista();
+		
+		ListView users = (ListView) findViewById(R.id.lVSelectUser);
+		
+		users.setAdapter(new AdapterListViewActivity(items, this));
+		
+	}
+	
+	private void llenarLista() {
+		
+		items.add(new CustomItemActivity("Daniela", "3 años", "", 0, 72));
+		items.add(new CustomItemActivity("Juan", "6 años", "", 10, 72));
+		items.add(new CustomItemActivity("Luis", "4 años", "", 20, 72));
+		items.add(new CustomItemActivity("Jenny", "5 años", "", 56, 72));
+		
+	}
+	
+	private void llenarListView() {
+		
+		ArrayAdapter<CustomItemActivity> adapter = new MyListAdapter();
+		ListView users = (ListView) findViewById(R.id.lVSelectUser);
+		users.setAdapter(adapter);
+		
+	}
+
+	private class MyListAdapter extends ArrayAdapter<CustomItemActivity>{
+
+		public MyListAdapter() {
+			super(SelectUserActivity2.this, R.layout.activity_custom_items, items);
+			// TODO Auto-generated constructor stub
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			
+			View view = convertView;
+			
+			if(view == null){
+				view = getLayoutInflater().inflate(R.layout.activity_custom_items, null);
+			}
+			
+			CustomItemActivity item = items.get(position);
+			
+			TextView userName = (TextView) view.findViewById(R.id.tVUserName);
+			userName.setText(item.getNombre());
+			
+			TextView userAge = (TextView) view.findViewById(R.id.tVUserAge);
+			userAge.setText(item.getEdad());
+			
+			TextView userWords = (TextView) view.findViewById(R.id.tVUserWords);
+			userWords.setText(item.getPalabras());
+			
+			ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.pBUser);
+			progressBar.setMax(item.getTotalPalabra());
+			progressBar.setProgress(item.getCantidadPalabra());
+			
+			ImageView image = (ImageView) view.findViewById(R.id.iVUserIconItem);
+					image.setImageResource(R.drawable.person_ic);
+					
+			return view;
+		}
+		
+		
+	}
+	  
+}

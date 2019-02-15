@@ -1,0 +1,37 @@
+package com.tesisyux.realidadaumentada.configuracion.usuario;
+
+import org.joda.time.LocalDate;
+import org.joda.time.Period;
+import org.joda.time.PeriodType;
+
+
+public class AgeManagerActivity {
+	
+
+	
+	public static String edad(String fechaNacimiento) {
+				
+		String arregloFecha[] = fechaNacimiento.split("/");
+		int dia=Integer.parseInt(arregloFecha[0]);
+		int mes=Integer.parseInt(arregloFecha[1]);
+		int ano=Integer.parseInt(arregloFecha[2]);
+		
+		LocalDate birthdate = new LocalDate (ano, mes, dia);  //Birth date
+		
+		LocalDate now = new LocalDate(); //Today's date
+		//Years age = Years.yearsBetween(birthdate, now);
+		        
+                
+		Period period = new Period(birthdate, now, PeriodType.yearMonthDay());
+		//Now access the values as below
+		//System.out.println(period.getDays());
+		//System.out.println(period.getMonths());
+		System.out.println(period.getYears());
+		
+		String edad = Integer.toString(period.getYears());
+		
+		return edad;
+	}
+	
+
+}

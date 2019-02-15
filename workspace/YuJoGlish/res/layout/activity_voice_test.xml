@@ -1,0 +1,109 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".VoiceTestActivity" >
+    
+    
+
+    <ImageButton
+        android:id="@+id/jugarbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="@android:color/transparent"
+        android:onClick="onButtonClick"
+        android:src="@drawable/close_ic" />
+ 
+    <TextView
+        android:id="@+id/tVPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progressBar1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="47dp"
+        android:textColor="@color/color_blanco" />
+
+    <!-- ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/tVPlay"
+        android:src="@drawable/listening2" /-->
+
+    <ImageButton
+        android:id="@+id/IBNextVoice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/progressBar1"
+        android:layout_centerVertical="true"
+         android:background="@drawable/purple_bg_oval"
+        android:onClick="onNextVoiceButtonClick"
+        android:src="@drawable/ic_next" />
+
+    <ToggleButton
+        android:id="@+id/toggleButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="56dp"
+        android:background="@drawable/voice_custom_togglebutton" />
+    
+     <!-- ImageButton
+        android:id="@+id/toggleButton1"
+        android:layout_width="@dimen/fab_button_diameter"
+        android:layout_height="@dimen/fab_button_diameter"
+        android:layout_alignParentRight="true"
+		android:layout_alignParentEnd="true"
+		android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/fab_button_margin_bottom"
+        android:layout_marginRight="@dimen/fab_button_margin_right"
+        android:background="@drawable/fab_shape"
+        android:src="@drawable/fab_ic_add"
+        android:tint="@color/white" 
+        android:onClick="onAddUserButtonClick"/-->
+
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="8dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/jugarbutton"
+        android:layout_marginBottom="22dp"
+        android:progress="45"
+        android:progressDrawable="@drawable/custom_progress" />
+    
+    <ImageView
+         android:id="@+id/iVCorrecion"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_centerHorizontal="true"
+         android:layout_centerVertical="true"
+         android:src="@drawable/correct_ic" />
+
+    <TextView
+        android:id="@+id/tVWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/jugarbutton"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:shadowColor="@color/color_negro"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="2"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/yellow_400"
+        android:textSize="50dp"
+        android:textStyle="bold" />
+          
+</RelativeLayout>
+

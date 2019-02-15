@@ -1,0 +1,77 @@
+package com.tesisyux.realidadaumentada.customadapter;
+
+import java.util.ArrayList;
+import com.tesisyux.realidadaumentada.R;
+import android.app.Activity;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+public class AdapterListViewActivity extends BaseAdapter{
+
+	private ArrayList<CustomItemActivity> items;
+	private Activity context;
+	private static LayoutInflater inflater=null;	
+	
+	public AdapterListViewActivity(ArrayList<CustomItemActivity> items,
+			Activity context) {
+		super();
+		this.items = items;
+		this.context = context;
+		 inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                 
+	}
+
+	@Override
+	public int getCount() {
+		// TODO Auto-generated method stub
+		return items.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		// TODO Auto-generated method stub
+		return items.get(position);
+	}
+
+	@Override
+	public long getItemId(int arg0) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		
+		CustomItemActivity item = items.get(position);
+		View view = convertView;
+		
+		if(convertView == null){
+			view = inflater.inflate(R.layout.activity_custom_items, null);
+		}
+		
+		TextView userName = (TextView) view.findViewById(R.id.tVUserName);
+		userName.setText(item.nombre);
+		
+		TextView userAge = (TextView) view.findViewById(R.id.tVUserAge);
+		userName.setText(item.edad);
+		
+		TextView userWords = (TextView) view.findViewById(R.id.tVUserWords);
+		userName.setText(item.palabras);
+		
+		ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.pBUser);
+		progressBar.setMax(item.totalPalabra);
+		progressBar.setProgress(item.cantidadPalabra);
+		
+		ImageView image = (ImageView) view.findViewById(R.id.iVUserIconItem);
+				image.setImageResource(R.drawable.person_ic);
+	
+		return null;
+	}
+
+}

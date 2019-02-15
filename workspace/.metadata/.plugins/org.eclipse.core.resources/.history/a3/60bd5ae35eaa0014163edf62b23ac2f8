@@ -1,0 +1,57 @@
+package com.tesisyux.realidadaumentada;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class MenuActivity extends Activity  {
+	
+	final static String LEVEL_INFO = "com.tesisyux.realidadaumentada.LearnActivity"; // Ruta y Nombre de la activad a la cual voy a enviar la info.
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);	    
+		setContentView(R.layout.activity_menu);
+		
+		TextView lessionName = (TextView) findViewById(R.id.textViewNameLevel);
+			 
+		 //Obtengo la información de la Actividad anterior y se la asigno a la variable info.
+		 Intent men = getIntent();
+		 String info = men.getStringExtra(LessonActivity.ACT_INFO);
+		 
+		 //Muestro la información en la interfaz.
+		 lessionName.setText(info);
+		 
+		  
+	}
+
+	public void onPlayButtonClick(View v)
+	{
+		//setActiveModel(1);
+		Intent myIntent = new Intent (v.getContext() , WordTestActivity.class);
+		startActivity(myIntent);
+	}
+	
+	public void onTestButtonClick(View v) {
+		
+		Intent myIntent = new Intent (v.getContext() , TestActivity.class);
+		startActivity(myIntent);
+		
+	}
+	
+	public void onLearnButtonClick(View v) {
+		
+		Intent myIntent = new Intent (this , LessonActivity.class);
+		myIntent.putExtra(LEVEL_INFO, "1");
+		startActivity(myIntent);
+	}
+	
+	public void onConfigureButtonClick(View v) {
+		Intent myIntent = new Intent (v.getContext() , TutorialTrackingSamples.class);
+		startActivity(myIntent);
+	}
+
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;rest_ful_webservice.xml&apos; to &apos;layout&apos;&#x0D;&#x0A;- Original project: &apos;RestFulWebservice&apos;&#x0D;&#x0A;- Destination element: &apos;layout&apos;&#x0D;&#x0A;- Original element: &apos;rest_ful_webservice.xml&apos;" description="Copy file" element1="res/layout/rest_ful_webservice.xml" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1429292885212" target="/YuJoGlish/res/layout" units="0" version="1.0"/>
+</session>

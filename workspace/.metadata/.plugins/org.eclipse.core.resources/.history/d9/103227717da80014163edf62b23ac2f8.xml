@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   >
+
+    <ImageButton
+        android:id="@+id/IBExit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="@android:color/transparent"
+        android:onClick="onButtonClick"
+        android:src="@drawable/close_ic" />
+
+    <TextView
+        android:id="@+id/tVWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/IBExit"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:shadowColor="@color/color_negro"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/color_blanco"
+        android:textSize="40dp" />
+
+    <ImageButton
+        android:id="@+id/IBListen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="34dp"
+        android:background="@android:color/transparent"
+        android:onClick="onListenButtonClick"
+        android:src="@drawable/listen_ic" />
+
+    <ImageButton
+        android:id="@+id/IBNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@android:color/transparent"
+        android:onClick="onNextButtonClick"
+        android:src="@drawable/next_ic" />
+          
+</RelativeLayout>

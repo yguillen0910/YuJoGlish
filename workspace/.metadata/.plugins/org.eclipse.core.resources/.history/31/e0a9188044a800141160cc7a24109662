@@ -1,0 +1,121 @@
+package com.tesisyux.realidadaumentada.configuracion.usuario;
+
+import com.tesisyux.realidadaumentada.R;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class PrincipalUserActivity extends Activity implements OnClickListener {
+
+
+	private TextView textViewNombre;
+	private TextView textViewEdad;
+	private Button buttonModificarUsuario;
+	private Button buttonAgregarUsuario;
+	private Button buttonSeleccionarUsuario;
+	private DbManagerConfigUsuario managerDB;
+	private Cursor cursor;
+	
+	private TextView textViewModificar;
+	private TextView textViewAgregar;
+	private TextView textViewSeleccionar;
+	
+	private Intent nuevaActividad;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_principal_user);
+		
+		
+		textViewNombre = (TextView) findViewById(R.id.textView_nombre_usuario); 
+		textViewEdad = (TextView) findViewById(R.id.textView_edad_usuario);
+		buttonModificarUsuario = (Button) findViewById(R.id.button_modificar_usuario);
+		buttonAgregarUsuario = (Button) findViewById(R.id.button_agregar_usuario);
+		buttonSeleccionarUsuario = (Button) findViewById(R.id.button_cambiar_usuario);
+		
+		textViewModificar = (TextView) findViewById(R.id.textView_generado1); 
+		textViewAgregar = (TextView) findViewById(R.id.textView_generado2);
+		textViewSeleccionar = (TextView) findViewById(R.id.textView_generado3);
+		
+		textViewModificar.setText("¿No estan tu nombre o edad correctos?");
+		textViewAgregar.setText("¿Quieres agregar a un amigo?");
+		textViewSeleccionar.setText("¿Queres seleccionar a otro usuario?");
+		
+		managerDB = new DbManagerConfigUsuario(this);
+		cursor = managerDB.cargarCursorUsuarioActivo();
+		
+		if(cursor.moveToFirst()){
+			String nombre[]=cursor.getString(1).split(" ");
+			textViewNombre.setText("Tu Nombre es "+nombre[0]);
+			textViewEdad.setText("Tienes "+AgeManagerActivity.edad(cursor.getString(2))+" años");
+		}
+		else {
+			managerDB.borrarTabla();
+			managerDB.insertarUsuario("Prueba", "27/01/2010");
+		}
+		
+		buttonModificarUsuario.setOnClickListener(this);
+		buttonAgregarUsuario.setOnClickListener(this);
+		buttonSeleccionarUsuario.setOnClickListener(this);
+		
+	}
+	
+	
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		
+		switch (v.getId()) {
+		case R.id.button_modificar_usuario:
+			
+			nuevaActividad =  new Intent(v.getContext(),ModifyUserActivity.class);
+			startActivity(nuevaActividad);
+			
+			break;
+			
+		case R.id.button_agregar_usuario:
+			
+			nuevaActividad =  new Intent(v.getContext(),AddUserActivity.class);
+			startActivity(nuevaActividad);
+			
+			break;
+			
+		case R.id.button_cambiar_usuario:
+			
+			nuevaActividad =  new Intent(v.getContext(),SelectUserActivity.class);
+			startActivity(nuevaActividad);
+			
+			break;	
+
+		default:
+			break;
+		}
+	}
+	
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		
+
+		cursor = managerDB.cargarCursorUsuarioActivo();
+		if(cursor.moveToFirst()){
+			textViewNombre.setText("Tu Nombre: "+cursor.getString(1));
+			textViewEdad.setText("Tu edad: "+AgeManagerActivity.edad(cursor.getString(2)));
+		}
+		
+	}
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+	}
+
+}
